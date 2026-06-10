@@ -1,27 +1,69 @@
-# Publication Audit
+﻿# 公開監査メモ
 
-This repository was narrowed for public source release.
+このメモは、Kobun Tiny LLM を世界に公開できる source repository として整えるための監査観点をまとめたものです。
 
-## Removed From Public Tracking
+## 公開形態
 
-- internal training log
-- generated evaluation board Markdown
-- generated LLM review packet Markdown
-- dated internal research notes
-- Colab notebook containing local-environment guard examples
-- cleaned waka corpus text
+現在の公開形態は source-only です。
 
-## Retained
+含めるもの:
 
 - source code
 - public metadata
-- rule tables
-- compact evaluation cases
-- typed autonomous governance contracts
-- security and data-policy documentation
+- source manifest
+- rule table
+- compact eval fixture
+- autonomy / release gate contract
+- documentation
 
-## Remaining Boundaries
+含めないもの:
 
-The repository is source-only. It is not a model release and does not contain a
-public checkpoint. Any future checkpoint release should be reviewed separately as
-a model artifact with its own license, data, evaluation, and safety evidence.
+- model weights
+- checkpoints
+- optimizer state
+- raw corpus
+- clean corpus
+- train / validation / test corpus
+- run logs
+- release package
+- private notes
+
+## 監査した観点
+
+公開前に確認する観点:
+
+- 個人名や local machine path が入っていないか
+- raw / clean corpus が追跡されていないか
+- checkpoint や optimizer state が追跡されていないか
+- generated logs や release package が追跡されていないか
+- internal-only review text が公開 docs に混ざっていないか
+- README と docs が source-only release として誤解を招かないか
+- Hugging Face upload が自動実行されるように見えないか
+
+## LLM と自律レイヤーの分離
+
+公開時点での重要な設計判断は、LLM 本体と自律レイヤーを分けることです。
+
+- `src/kobun_llm/` はモデル本体の領域
+- `src/kobun_autonomy/` は公開判定、監査、non-release 管理、gate の領域
+
+これにより、モデルの学習・推論コードと、公開安全性を判断する governance code を混同しないようにしています。
+
+## Hugging Face 公開前の追加監査
+
+モデル完成後に Hugging Face へ公開する場合は、GitHub 公開とは別に次を監査します。
+
+- exact best checkpoint が正しいか
+- model config と tokenizer が checkpoint と一致しているか
+- model card が十分か
+- eval results が checkpoint-bound か
+- release package に禁止ファイルがないか
+- safetensors など安全な形式を使っているか
+- private path、secret、raw text、clean text が入っていないか
+- upload が人間の明示承認に基づいているか
+
+## 現在の結論
+
+このリポジトリは、source-only public repository として公開する前提で整理されています。
+
+モデル release はまだ行っていません。Hugging Face 公開は、完成した fresh checkpoint と release evidence がそろった後の別工程です。

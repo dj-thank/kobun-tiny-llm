@@ -38,6 +38,14 @@ docs/               アーキテクチャ、データ方針、公開監査メモ
 モデル本体は、自律運用レイヤーに依存しすぎないようにします。逆に、自律運用レイヤーはモデルや run を監視・分類できますが、モデルの学習データを作ったり、評価指標の代わりになったり、勝手に export / upload したりしてはいけません。
 
 詳しくは [Autonomy Architecture](docs/AUTONOMY_ARCHITECTURE.md) を参照してください。
+## ドキュメント
+
+公開設計の詳細は、次の docs に分けています。
+
+- [Architecture](docs/ARCHITECTURE.md): LLM 本体、script、data、docs の全体構成
+- [Autonomy Architecture](docs/AUTONOMY_ARCHITECTURE.md): 自律運用、release gate、non-release 管理、型付き contract
+- [Data and Release Policy](docs/DATA_AND_RELEASE_POLICY.md): 公開するデータ、公開しないデータ、Hugging Face 公開条件
+- [Publication Audit](docs/PUBLICATION_AUDIT.md): source-only 公開前後の監査観点
 
 ## インストール
 
