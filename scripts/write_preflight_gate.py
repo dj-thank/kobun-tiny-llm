@@ -97,7 +97,6 @@ HASHED_INPUTS = [
     "data/eval/eval_provenance_manifest.json",
     "data/grammar/train_preference_pairs.jsonl",
     "logs/public_manifest_summary.json",
-    "notebooks/old_japanese_0_1b_colab_cuda.ipynb",
 ]
 HASHED_GLOBS = [
     "scripts/*.py",

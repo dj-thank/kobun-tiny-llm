@@ -1,4 +1,4 @@
-﻿# 公開監査メモ
+# 公開監査メモ
 
 このメモは、Kobun Tiny LLM を世界に公開できる source repository として整えるための監査観点をまとめたものです。
 
@@ -48,6 +48,18 @@
 - `src/kobun_autonomy/` は公開判定、監査、non-release 管理、gate の領域
 
 これにより、モデルの学習・推論コードと、公開安全性を判断する governance code を混同しないようにしています。
+
+## 型付き自律 contract
+
+自律レイヤーは、評価 board、run 分類、release evidence、autonomous action を型付きの構造として扱います。
+
+型付き contract によって、次の点を監査しやすくします。
+
+- どの run が release candidate か
+- どの run が non-release として固定されているか
+- どの gate が通っていて、どの gate が blocker か
+- upload-ready と実際の upload が混同されていないか
+- reviewer text が checkpoint-bound metric の代わりになっていないか
 
 ## Hugging Face 公開前の追加監査
 

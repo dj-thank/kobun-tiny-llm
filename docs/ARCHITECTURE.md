@@ -1,4 +1,4 @@
-﻿# アーキテクチャ
+# アーキテクチャ
 
 Kobun Tiny LLM は、古典日本語向けの小さな GPT 形式モデルをゼロから学習するための研究用コードベースです。設計上の中心は、モデル本体と自律運用レイヤーを分けることです。
 
@@ -45,6 +45,12 @@ docs/               設計、データ方針、公開監査メモ
 - supervisor / gate が使う共通 contract
 
 自律レイヤーは、モデルを勝手に公開する仕組みではありません。むしろ逆で、未完成の run、古い checkpoint、証跡不足の artifact、private path や raw corpus を含む package が公開されないようにするための安全装置です。
+
+## 型付き境界
+
+`src/kobun_autonomy/types.py` は、評価 board、run 分類、release evidence、autonomous action などの共有構造を型として定義します。
+
+この型付き境界によって、script ごとに意味の異なる dict を作るのではなく、同じ状態を同じ形で扱えるようにしています。自律運用の判断は型と gate に寄せ、LLM 本体の学習・推論コードから切り離します。
 
 ## `scripts/`
 

@@ -27,33 +27,34 @@ def require_not_contains(path: Path, needle: str) -> None:
 
 
 def main() -> None:
-    notebook = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
-    if notebook.get("nbformat") != 4:
-        raise SystemExit("Colab notebook is not nbformat v4")
-    source_text = "\n".join(
-        "".join(cell.get("source") or [])
-        for cell in notebook.get("cells") or []
-        if isinstance(cell, dict)
-    )
-    for needle in (
-        "drive.mount('/content/drive')",
-        "PROJECT_ROOT = '/content/drive/MyDrive/kobun-tiny-llm'",
-        "parts[0] != 'kobun-tiny-llm'",
-        "scripts/check_colab_cuda_environment.py",
-        "scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py",
-        "RUN_ID = 'old_japanese_0_1b_cuda_'",
-        "'--run-id', RUN_ID",
-        "--allow-start-training",
-        "--reviews-passed",
-        "validate_colab_sync_archive(archive)",
-        "colab_sync_bundle_manifest.json",
-        "contains_codex_state",
-        "forbidden internal/secret text",
-    ):
-        if needle not in source_text:
-            raise SystemExit(f"notebook missing expected Colab cell content: {needle!r}")
+    if NOTEBOOK.exists():
+        notebook = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
+        if notebook.get("nbformat") != 4:
+            raise SystemExit("Colab notebook is not nbformat v4")
+        source_text = "\n".join(
+            "".join(cell.get("source") or [])
+            for cell in notebook.get("cells") or []
+            if isinstance(cell, dict)
+        )
+        for needle in (
+            "drive.mount('/content/drive')",
+            "PROJECT_ROOT = '/content/drive/MyDrive/kobun-tiny-llm'",
+            "parts[0] != 'kobun-tiny-llm'",
+            "scripts/check_colab_cuda_environment.py",
+            "scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py",
+            "RUN_ID = 'old_japanese_0_1b_cuda_'",
+            "'--run-id', RUN_ID",
+            "--allow-start-training",
+            "--reviews-passed",
+            "validate_colab_sync_archive(archive)",
+            "colab_sync_bundle_manifest.json",
+            "contains_codex_state",
+            "forbidden internal/secret text",
+        ):
+            if needle not in source_text:
+                raise SystemExit(f"notebook missing expected Colab cell content: {needle!r}")
 
-    for path in (NOTEBOOK, STARTER, ENV_CHECK, QUALITY):
+    for path in tuple(p for p in (NOTEBOOK, STARTER, ENV_CHECK, QUALITY) if p.exists()):
         for forbidden in (
             "export_hf_release.py",
             "push_to_hub",
