@@ -13,7 +13,8 @@ def require(path: Path, needle: str) -> None:
 
 
 def main() -> None:
-    require(ROOT / "src" / "kobun_llm" / "release_policy.py", "NON_RELEASE_RUNS")
+    require(ROOT / "src" / "kobun_autonomy" / "release_policy.py", "NON_RELEASE_RUNS")
+    require(ROOT / "src" / "kobun_llm" / "release_policy.py", "compatibility")
     require(ROOT / "src" / "kobun_llm" / "train.py", "release-shaped training must be from scratch")
     require(ROOT / "src" / "kobun_llm" / "train.py", "require_release_candidate_run(args.run_id")
     require(ROOT / "scripts" / "check_run_completion.py", "require_release_candidate_run(run_id")
@@ -41,7 +42,7 @@ def main() -> None:
     require(ROOT / "src" / "kobun_llm" / "train.py", "early stopping: overfit signal")
     require(ROOT / "scripts" / "train_old_japanese_0_1b_dml.ps1", "--overfit-stop-gap")
     require(ROOT / "scripts" / "train_old_japanese_0_1b_gpu.ps1", "CUDA/HIP release-candidate training is disabled")
-    require(ROOT / "scripts" / "train_old_japanese_0_1b_gpu.ps1", "zero-base review gate")
+    require(ROOT / "scripts" / "train_old_japanese_0_1b_gpu.ps1", "independent review gate")
     require(ROOT / "scripts" / "export_hf_release.py", "save_model(model")
     require(ROOT / "scripts" / "export_hf_release.py", "check_release_gate.py")
     require(ROOT / "scripts" / "export_hf_release.py", "--confirm-explicit-user-request")

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""compatibility shim for the autonomy non-release registry namespace."""
+
 from kobun_autonomy.non_release_registry import (
     NonReleaseRecordError,
     is_non_release_recorded,

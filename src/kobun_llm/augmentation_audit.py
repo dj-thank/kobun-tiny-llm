@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""compatibility shim for the autonomy augmentation-audit namespace."""
+
 from kobun_autonomy.augmentation_audit import (
     ALLOWED_AUGMENTATION_SOURCE_TYPES,
     REQUIRED_AUGMENTATION_ROLES,

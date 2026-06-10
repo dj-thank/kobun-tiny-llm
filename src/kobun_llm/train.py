@@ -21,7 +21,7 @@ from .checkpoint_io import load_trusted_checkpoint
 from .device import describe_device, device_backend, is_cuda_device, resolve_device
 from .model import GPT, GPTConfig
 from .optimizer_state import validate_simple_adamw_state
-from .release_policy import require_release_candidate_run
+from kobun_autonomy.release_policy import require_release_candidate_run
 from .release_resume import (
     file_records_signature,
     optimizer_checkpoint_step,
