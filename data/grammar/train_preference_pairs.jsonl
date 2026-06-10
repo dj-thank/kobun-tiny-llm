@@ -1,0 +1,10 @@
+{"prompt":"秋こそ","good":"あはれなれ。","bad":"あはれなり。","rule_ids":["kakari_koso_izen"],"explanation":"こそ requires 已然形"}
+{"prompt":"水こそ","good":"清けれ。","bad":"清き。","rule_ids":["kakari_koso_izen"],"explanation":"こそ requires 已然形"}
+{"prompt":"花ぞ","good":"散る。","bad":"散れり。","rule_ids":["kakari_zo_rentai"],"explanation":"ぞ requires 連体形"}
+{"prompt":"月なむ","good":"明き。","bad":"明し。","rule_ids":["kakari_namu_rentai"],"explanation":"なむ requires 連体形"}
+{"prompt":"いづれか","good":"行かむ。","bad":"行きけり。","rule_ids":["kakari_ya_ka_rentai"],"explanation":"か requires 連体形"}
+{"prompt":"何や","good":"見る。","bad":"見けり。","rule_ids":["kakari_ya_ka_rentai"],"explanation":"や requires 連体形"}
+{"prompt":"人の","good":"ありけるを。","bad":"ありけりるを。","rule_ids":["aux_keri_inflection"],"explanation":"けり has fixed inflection"}
+{"prompt":"聞き","good":"しこと。","bad":"きること。","rule_ids":["aux_ki_inflection"],"explanation":"き has 連体形 し"}
+{"prompt":"思は","good":"ぬ道。","bad":"ずる道。","rule_ids":["aux_zu_inflection"],"explanation":"ず has 連体形 ぬ"}
+{"prompt":"君","good":"おはします。","bad":"おはしますおはします。","rule_ids":["honorific_genji_style"],"explanation":"honorifics should not be repeated mechanically"}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "rule_set_id": "genji_era_auxiliaries_v1",
+  "period_scope_policy": "period_scope_policy_genji_era_v1",
+  "canonical_source": "data/grammar/auxiliary_rules.jsonl",
+  "role": "project_authored_rule_table",
+  "release_evidence_role": "smoke_regression_gate",
+  "core_auxiliaries": [
+    "る",
+    "らる",
+    "す",
+    "さす",
+    "しむ",
+    "む",
+    "むず",
+    "まし",
+    "ず",
+    "じ",
+    "まほし",
+    "き",
+    "けり",
+    "つ",
+    "ぬ",
+    "たり",
+    "けむ",
+    "たし",
+    "らむ",
+    "べし",
+    "らし",
+    "めり",
+    "なり",
+    "まじ",
+    "ごとし",
+    "り"
+  ],
+  "required_fields_in_canonical_rows": [
+    "lemma",
+    "sense",
+    "connects_to",
+    "forms",
+    "class",
+    "generation_scope"
+  ],
+  "required_forms": [
+    "未然形",
+    "連用形",
+    "終止形",
+    "連体形",
+    "已然形"
+  ],
+  "llm_generated_corpus_text": false
+}

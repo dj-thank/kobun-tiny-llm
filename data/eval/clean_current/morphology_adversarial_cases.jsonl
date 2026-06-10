@@ -1,0 +1,5 @@
+{"text": "なかなか咲く花はよし", "forbidden_surfaces": ["か"], "max_score": 0, "explanation": "なかなか内のかを係助詞として拾わない。"}
+{"text": "明き空", "forbidden_surfaces": ["き"], "max_score": 0, "explanation": "語内のきだけで過去助動詞扱いしない。"}
+{"text": "さらぬ霞ぞ見ゆる", "required_surfaces": ["ぞ"], "max_score": 0, "explanation": "係助詞だけで結び未確定の文を高得点扱いしない。"}
+{"text": "いづくにか帰るらむ", "required_surfaces": ["か", "らむ"], "min_score": 4, "explanation": "疑問かと推量の結びを拾う。"}
+{"text": "誰や訪ぬる", "required_surfaces": ["や", "ぬる"], "min_score": 4, "explanation": "疑問やと連体形相当の結びを拾う。"}

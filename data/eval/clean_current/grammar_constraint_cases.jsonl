@@ -1,0 +1,28 @@
+{"context": "月こそあはれな", "allowed_next": ["れ"], "rule_id": "kakari_koso_izen", "explanation": "こそ requires 已然形: あはれなれ", "force_allowed": true}
+{"context": "夢こそ知ら", "allowed_next": ["ね"], "rule_id": "kakari_koso_izen", "explanation": "こそ requires 已然形: 知らね", "force_allowed": true}
+{"context": "露ぞ咲", "allowed_next": ["く"], "rule_id": "kakari_zo_rentai", "explanation": "ぞ requires 連体形: 咲く", "force_allowed": true}
+{"context": "雲なむ恋し", "allowed_next": ["き"], "rule_id": "kakari_namu_rentai", "explanation": "なむ requires 連体形: 恋しき", "force_allowed": true}
+{"context": "誰や来", "allowed_next": ["る"], "rule_id": "kakari_ya_ka_rentai", "explanation": "や requires 連体形: 来る", "force_allowed": true}
+{"context": "いかでか夢知ら", "allowed_next": ["む"], "rule_id": "kakari_ya_ka_rentai", "explanation": "いかでか...知ら resolves as 知らむ", "force_allowed": true}
+{"context": "露ぞあはれな", "allowed_next": ["る"], "rule_id": "kakari_zo_rentai", "explanation": "ぞ requires 連体形: あはれなる", "force_allowed": true}
+{"context": "いとたまふ", "banned_next": ["た"], "rule_id": "honorific_repeat", "explanation": "avoid chained honorific repetition"}
+{"context": "昔の人ありけり", "banned_next": ["る", "れ"], "rule_id": "aux_keri_inflection", "explanation": "avoid malformed けりる/けりれ"}
+{"context": "ただなかなか咲", "no_decision": true, "rule_id": "false_positive_ka_inside_word", "explanation": "do not treat ordinary か inside なかなか as kakari-musubi"}
+{"context": "いかにも知ら", "no_decision": true, "rule_id": "false_positive_ka_not_kakari", "explanation": "do not force 知らむ without high-confidence か trigger"}
+{"context": "あさく咲きぬ", "no_decision": true, "rule_id": "perfective_nu_not_hard_banned", "explanation": "do not ban valid perfective ぬる/ぬれ after ぬ"}
+{"context": "ゆめ帰りぬ", "no_decision": true, "rule_id": "perfective_nu_after_renyou_not_hard_banned", "explanation": "do not ban valid perfective ぬる/ぬれ after ぬ"}
+{"context": "山こそ高", "allowed_next": ["け"], "rule_id": "kakari_koso_izen_taka", "explanation": "こそ requires 已然形: 高け", "force_allowed": true}
+{"context": "いかにや咲", "allowed_next": ["く"], "rule_id": "kakari_ya_rentai_saku_ikani", "explanation": "いかにや requires 連体形: 咲く", "force_allowed": true}
+{"context": "いづれや見", "allowed_next": ["る"], "rule_id": "kakari_ya_rentai_mi_idure", "explanation": "いづれや requires 連体形: 見る", "force_allowed": true}
+{"context": "誰や恋し", "allowed_next": ["き"], "rule_id": "kakari_ya_rentai_koishi_dare", "explanation": "誰や requires 連体形: 恋しき", "force_allowed": true}
+{"context": "何か咲", "allowed_next": ["く"], "rule_id": "kakari_ka_rentai_saku_nani", "explanation": "何か requires 連体形: 咲く", "force_allowed": true}
+{"context": "露ぞ散り", "allowed_next": ["る"], "rule_id": "kakari_zo_rentai_chiru", "explanation": "ぞ requires 連体形: 散る", "force_allowed": true}
+{"context": "嵐ぞ吹", "allowed_next": ["く"], "rule_id": "kakari_zo_rentai_fuku", "explanation": "ぞ requires 連体形: 吹く", "force_allowed": true}
+{"context": "鳥ぞ起", "allowed_next": ["く"], "rule_id": "kakari_zo_rentai_kaminidan_oku_step1", "explanation": "ぞ requires 連体形 起くる: at 起 next char is く", "force_allowed": true}
+{"context": "鳥ぞ起く", "allowed_next": ["る"], "rule_id": "kakari_zo_rentai_kaminidan_oku_step2", "explanation": "ぞ requires 連体形 起くる: at 起く next char is る", "force_allowed": true}
+{"context": "我こそ受", "allowed_next": ["く"], "rule_id": "kakari_koso_izen_shimonidan_uku_step1", "explanation": "こそ requires 已然形 受くれ: at 受 next char is く", "force_allowed": true}
+{"context": "我こそ受く", "allowed_next": ["れ"], "rule_id": "kakari_koso_izen_shimonidan_uku_step2", "explanation": "こそ requires 已然形 受くれ: at 受く next char is れ", "force_allowed": true}
+{"context": "敵こそ死", "allowed_next": ["ぬ"], "rule_id": "kakari_koso_izen_nahen_shinu_step1", "explanation": "こそ requires 已然形 死ぬれ: at 死 next char is ぬ", "force_allowed": true}
+{"context": "敵こそ死ぬ", "allowed_next": ["れ"], "rule_id": "kakari_koso_izen_nahen_shinu_step2", "explanation": "こそ requires 已然形 死ぬれ: at 死ぬ next char is れ", "force_allowed": true}
+{"context": "雪こそあ", "allowed_next": ["れ"], "rule_id": "kakari_koso_izen_rahen_ari", "explanation": "こそ requires 已然形 あれ", "force_allowed": true}
+{"context": "風ぞ堂々た", "allowed_next": ["る"], "rule_id": "kakari_zo_rentai_tari_keiyoudoushi", "explanation": "ぞ requires 連体形 堂々たる", "force_allowed": true}

@@ -1,0 +1,5 @@
+{"pattern_id":"genji_omohosu","style":"genji","long_unit":"思し-たまふ","short_units":["思す","たまふ"],"category":"honorific_collocation","positive_examples":["思したまふ。","思しのたまふ。"],"negative_examples":["思すたまふたまふ。"],"weight":3}
+{"pattern_id":"genji_kikoyu","style":"genji","long_unit":"聞こえ-たまふ","short_units":["聞こえ","たまふ"],"category":"honorific_collocation","positive_examples":["聞こえたまふ。","聞こえたまひけり。"],"negative_examples":["聞こゆ聞こゆたまふ。"],"weight":3}
+{"pattern_id":"setsuwa_arikeri","style":"setsuwa","long_unit":"あり-けり","short_units":["あり","けり"],"category":"narrative_ending","positive_examples":["昔、男ありけり。","今は昔、ありけり。"],"negative_examples":["昔、男ありけりる。"],"weight":3}
+{"pattern_id":"kakari_koso_izen_chunk","style":"all","long_unit":"こそ-已然形","short_units":["こそ"],"category":"kakari_musubi","positive_examples":["春こそあはれなれ。","人こそ知らね。"],"negative_examples":["春こそあはれなり。"],"weight":5}
+{"pattern_id":"kakari_zo_rentai_chunk","style":"all","long_unit":"ぞ-連体形","short_units":["ぞ"],"category":"kakari_musubi","positive_examples":["花ぞ咲く。","昔ぞ恋しき。"],"negative_examples":["花ぞ咲けり。"],"weight":4}

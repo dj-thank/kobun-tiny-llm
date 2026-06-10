@@ -1,0 +1,9 @@
+{"prompt": "月こそ", "good": "明けれ。", "bad": "明く。", "rule_ids": ["heldout_kakari_koso_izen"], "explanation": "こそは已然形を要求する。"}
+{"prompt": "風こそ", "good": "寒けれ。", "bad": "寒し。", "rule_ids": ["heldout_kakari_koso_izen"], "explanation": "形容詞もこそ係り結びでは已然形。"}
+{"prompt": "鳥ぞ", "good": "鳴く。", "bad": "鳴け。", "rule_ids": ["heldout_kakari_zo_rentai"], "explanation": "ぞは連体形を要求する。"}
+{"prompt": "世になむ", "good": "ありがたき。", "bad": "ありがたし。", "rule_ids": ["heldout_kakari_namu_rentai"], "explanation": "なむは連体形を要求する。"}
+{"prompt": "袖の露", "good": "消えにけり。", "bad": "消えにけるけり。", "rule_ids": ["heldout_aux_keri_sequence"], "explanation": "けりの不自然な重複を避ける。"}
+{"prompt": "聞か", "good": "ぬ人。", "bad": "ずる人。", "rule_ids": ["heldout_aux_zu_rentai"], "explanation": "打消ずの連体形はぬ。"}
+{"prompt": "帰り", "good": "ぬる人。", "bad": "ぬれ人。", "rule_ids": ["heldout_aux_nu_rentai"], "explanation": "完了ぬの連体形はぬる。"}
+{"prompt": "見", "good": "つる夢。", "bad": "つれ夢。", "rule_ids": ["heldout_aux_tsu_rentai"], "explanation": "完了つの連体形はつる。"}
+{"prompt": "おはしまし", "good": "ける御前。", "bad": "たりたりたり。", "rule_ids": ["heldout_honorific_style"], "explanation": "敬語まわりの反復ノイズを避ける。"}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "policy_id": "period_scope_policy_genji_era_v1",
+  "release_grammar_scope": {
+    "name": "genji-era / heian-middle chuko classical Japanese",
+    "allowed_evidence_roles": [
+      "genji_era_train",
+      "genji_era_validation",
+      "genji_era_test",
+      "project_authored_rule_table",
+      "project_authored_smoke_eval"
+    ],
+    "reference_only_roles": [
+      "later_medieval_reference",
+      "diachronic_reference",
+      "modern_explanation"
+    ],
+    "forbidden_release_evidence_roles": [
+      "llm_generated_corpus_text",
+      "modern_translation",
+      "unlicensed_text",
+      "unprovenanced_text"
+    ]
+  },
+  "release_rules": [
+    "Do not use later medieval grammar as positive release evidence for Genji-era grammar.",
+    "Use validation loss for early stopping only; use checkpoint-bound test_lm_token_nll as the release model metric.",
+    "Treat contaminated or corpus-derived minimal pairs as smoke/regression evidence only.",
+    "LLMs may critique evidence clarity and diagnostics, but must not create training text or replace hard gates."
+  ],
+  "llm_generated_corpus_text": false
+}

@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "name": "old-japanese-0.1B generation diagnostic policy",
+  "scope": "genji-era / heian-middle chuko classical Japanese",
+  "release_metric": false,
+  "metric_role": "diagnostic_human_llm_review_only",
+  "llm_use_policy": {
+    "allowed": [
+      "generation diagnostics after checkpoint-bound hard gates",
+      "failure classification",
+      "next-action selection",
+      "evidence clarity review",
+      "independent reviewer critique"
+    ],
+    "forbidden": [
+      "training corpus text generation",
+      "replacement for checkpoint-bound test_lm_token_nll",
+      "replacement for split leakage checks",
+      "replacement for eval contamination checks",
+      "replacement for provenance and source hash audits",
+      "release evidence without local deterministic gates"
+    ]
+  },
+  "outputs": {
+    "json_dir": "logs/generation_diagnostics",
+    "markdown_dir": "logs/generation_diagnostics_md",
+    "json_name_pattern": "<run_id>_generation_diagnostic_plan.json",
+    "markdown_name_pattern": "GENERATION_DIAGNOSTIC_PLAN_<run_id>.md",
+    "public_artifact": false
+  },
+  "sanitization": {
+    "forbidden_in_outputs": [
+      "raw corpus text",
+      "clean corpus text",
+      "train split text",
+      "validation split text",
+      "test split text",
+      "full training logs",
+      "optimizer state",
+      "run snapshots",
+      "assistant internal state",
+      "secrets",
+      "cache paths"
+    ],
+    "allowed_in_outputs": [
+      "run id",
+      "checkpoint basename and hash",
+      "short project-authored diagnostic prompts",
+      "dimension ids",
+      "sanitized pass/warn/fail summaries",
+      "next action recommendations"
+    ]
+  },
+  "dimensions": [
+    {
+      "id": "genji_era_scope",
+      "description": "中古和文・源氏時代らしさを診断し、後代の和漢混交文を正解扱いしない。",
+      "release_metric": false,
+      "hard_gate": false
+    },
+    {
+      "id": "auxiliary_control",
+      "description": "助動詞の接続、意味、活用の自然さを診断する。",
+      "release_metric": false,
+      "hard_gate": false
+    },
+    {
+      "id": "kakari_musubi",
+      "description": "ぞ・なむ・や・か・こそに対する結びの自然さを診断する。",
+      "release_metric": false,
+      "hard_gate": false
+    },
+    {
+      "id": "honorific_control",
+      "description": "尊敬・謙譲・丁寧の混線と過剰敬語を診断する。",
+      "release_metric": false,
+      "hard_gate": false
+    },
+    {
+      "id": "waka_meter",
+      "description": "和歌生成の五七五七七と歌語らしさを診断する。",
+      "release_metric": false,
+      "hard_gate": false
+    },
+    {
+      "id": "modern_japanese_intrusion",
+      "description": "現代語・現代文体・説明口調の混入を診断する。",
+      "release_metric": false,
+      "hard_gate": false
+    },
+    {
+      "id": "degeneration",
+      "description": "反復、途中破綻、記号化、同一語句の過剰連鎖を診断する。",
+      "release_metric": false,
+      "hard_gate": false
+    }
+  ],
+  "probes": [
+    {
+      "id": "genji_prose_scene",
+      "dimension_ids": ["genji_era_scope", "auxiliary_control", "honorific_control", "degeneration"],
+      "prompt": "夕暮れの御簾のうちに、人知れず思ひ続けて、",
+      "provenance": "project-authored diagnostic probe",
+      "trainable": false
+    },
+    {
+      "id": "kakari_musubi_zo",
+      "dimension_ids": ["kakari_musubi", "auxiliary_control", "degeneration"],
+      "prompt": "いかでかくのみぞ、",
+      "provenance": "project-authored diagnostic probe",
+      "trainable": false
+    },
+    {
+      "id": "kakari_musubi_koso",
+      "dimension_ids": ["kakari_musubi", "genji_era_scope", "degeneration"],
+      "prompt": "人の心こそ、",
+      "provenance": "project-authored diagnostic probe",
+      "trainable": false
+    },
+    {
+      "id": "honorific_scene",
+      "dimension_ids": ["honorific_control", "genji_era_scope", "modern_japanese_intrusion"],
+      "prompt": "上達部の御前にて、いと静かに",
+      "provenance": "project-authored diagnostic probe",
+      "trainable": false
+    },
+    {
+      "id": "waka_meter_57577",
+      "dimension_ids": ["waka_meter", "genji_era_scope", "degeneration"],
+      "prompt": "春の夜の",
+      "provenance": "project-authored diagnostic probe",
+      "trainable": false
+    },
+    {
+      "id": "modern_intrusion_guard",
+      "dimension_ids": ["modern_japanese_intrusion", "genji_era_scope", "degeneration"],
+      "prompt": "もの思ふころ、",
+      "provenance": "project-authored diagnostic probe",
+      "trainable": false
+    }
+  ]
+}

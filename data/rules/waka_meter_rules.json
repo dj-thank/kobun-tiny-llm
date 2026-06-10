@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "rule_set_id": "waka_meter_rules_v1",
+  "canonical_source": "data/grammar/genre_rules.jsonl",
+  "role": "project_authored_rule_table",
+  "release_evidence_role": "smoke_regression_gate",
+  "target_morae": [
+    5,
+    7,
+    5,
+    7,
+    7
+  ],
+  "required_categories": [
+    "meter",
+    "makurakotoba",
+    "kakekotoba",
+    "engo",
+    "ending"
+  ],
+  "metric_policy": {
+    "static_meter": "release smoke gate",
+    "constrained_generation": "release smoke gate",
+    "unconstrained_poetic_quality": "diagnostic only"
+  },
+  "llm_generated_corpus_text": false
+}

@@ -1,0 +1,178 @@
+[review_loop]
+name = "old-japanese-0.1B independent review gate"
+enabled = true
+mode = "improve_then_fresh_review"
+stop_condition = "all_required_scopes_report_no_blocking_findings"
+continue_until_stop_condition = true
+do_not_interrupt_active_training = true
+manual_hf_export_only = true
+
+[project]
+repo_path = "<repo_root>"
+target_model_id = "old-japanese-0.1B"
+purpose = "Build a from-scratch local classical Japanese LLM with public corpus provenance, clean evaluation, reproducibility, and safe release preparation."
+
+[reviewers.defaults]
+model = "independent-reviewer"
+reasoning_effort = "high"
+agent_type = "explorer"
+fork_context = false
+allow_file_edits = false
+share_patch_summary = false
+share_prior_findings = false
+fresh_review_required = true
+do_not_prescribe_no_blocker_wording = true
+
+[[reviewers]]
+id = "safety_release"
+scope = "checkpoint selection, export, secrets, corpus leakage, eval contamination, logs, release package contents"
+required_for_release_quality_changes = true
+
+[[reviewers]]
+id = "data_eval"
+scope = "manifest split, heldout validity, grammar/waka/morphology eval design, contamination, overfitting risks"
+required_for_release_quality_changes = true
+
+[[reviewers]]
+id = "backend_runtime"
+scope = "DirectML/CUDA/HIP device handling, checkpoint loading, training scripts, failure detection"
+required_for_backend_changes = true
+
+[acceptance]
+local_checks_must_pass = true
+watcher_must_not_export_hf = true
+exact_checkpoint_required = true
+eval_contamination_check_required = true
+eval_source_overlap_check_required = true
+release_name_prefix_required = "old-japanese-0.1B"
+validation_oov_must_be_empty = true
+test_oov_must_be_empty = true
+tokenizer_scope_gate_required = true
+tokenizer_policy_required = "train_split_plus_core_japanese_inventory_plus_utf8_byte_fallback_v1"
+tokenizer_forbidden_heldout_leakage_required = 0
+tokenizer_meta_verified_required = true
+tokenizer_vocab_hash_policy = "sha256_raw_utf8_bytes"
+independent_test_split_required = true
+split_consistency_required = true
+split_policy_required = "work_group_genji_reference_v1"
+split_group_disjoint_required = true
+minimum_test_sources = 3
+minimum_test_source_characters = 30000
+minimum_test_text_characters = 20000
+waka_item_leakage_required = 0
+validation_test_prose_leakage_required = 0
+validation_test_waka_leakage_required = 0
+grammar_scope = "Genji-era chuko classical Japanese; not a diachronic grammar comparison"
+minimal_pair_smoke_accuracy_required = 1.0
+release_optimizer_required = "simple-adamw"
+release_backend_required_for_dml = "dml"
+release_run_completion_sentinel_required = true
+source_record_hash_audit_required = true
+release_package_scan_required_when_exported = true
+release_package_scanner_requires_basename_paths = true
+hip_backend_must_not_be_labeled_cuda = true
+minimum_independent_no_blocker_reviews = 3
+
+[routing]
+strategy = "changed_surface_area"
+default_when_unclear = ["safety_release", "data_eval", "backend_runtime"]
+over_route_when_uncertain = true
+never_fork_context = true
+never_share_patch_summary = true
+
+[[routing.rules]]
+id = "release_safety"
+paths = [
+  "scripts/*release*",
+  "scripts/finalize*",
+  "scripts/check_release_package.py",
+  "scripts/export_hf_release.py",
+  "release/**",
+  "pyproject.toml",
+]
+reviewers = ["safety_release"]
+
+[[routing.rules]]
+id = "data_eval"
+paths = [
+  "data/**",
+  "scripts/build_*corpus*.py",
+  "scripts/check_eval_contamination.py",
+  "scripts/check_eval_source_overlap.py",
+  "scripts/check_split_leakage.py",
+  "scripts/eval_*.py",
+  "docs/*EVAL*",
+]
+reviewers = ["data_eval"]
+
+[[routing.rules]]
+id = "backend_runtime"
+paths = [
+  "src/kobun_llm/device.py",
+  "src/kobun_llm/train.py",
+  "src/kobun_llm/checkpoint_io.py",
+  "scripts/train_*",
+  "scripts/run_quality_checks*",
+  "scripts/watch_*",
+]
+reviewers = ["backend_runtime"]
+
+[[routing.rules]]
+id = "review_policy_docs"
+paths = [
+  "docs/AUTONOMY_ARCHITECTURE.md",
+  "codex_review_loop.config.toml",
+]
+reviewers = ["safety_release", "data_eval"]
+
+[[routing.rules]]
+id = "docs_readme"
+paths = [
+  "README.md",
+  "docs/**",
+]
+reviewers = ["safety_release"]
+
+[local_checks]
+syntax_python = "python -m py_compile changed Python files"
+syntax_powershell = "PowerShell parser check for changed .ps1 files"
+static_quality = ".\\scripts\\run_static_quality_checks.ps1"
+tokenizer_scope = "python scripts\\check_tokenizer_vocab_scope.py --manifest data\\corpus_manifest.jsonl --tokenizer-extra-data data\\tokenizer_public_char_vocab.txt --tokenizer-meta data\\tokenizer_public_char_vocab.meta.json --max-vocab-size 10000"
+source_record_hash_audit = "python scripts\\audit_source_records.py data\\aozora\\sources.json data\\waka\\sources.json"
+split_consistency = "python scripts\\check_split_consistency.py --manifest data\\corpus_manifest.jsonl --train data\\kobun_worldclass_corpus.txt --val data\\kobun_labeled_grammar_val.txt --test data\\kobun_labeled_grammar_test.txt"
+progress_report = ".\\scripts\\report_old_japanese_0_1b_progress.ps1 -RunId <run_id> -ProcessId <training_pid>"
+run_completion = "python scripts\\check_run_completion.py --checkpoint <checkpoint> --require-no-active-process"
+fresh_dml_launch = ".\\scripts\\autonomous_old_japanese_0_1b_loop.ps1 -Mode TrainWhenReady -AllowStartTraining -ReviewsPassed"
+zero_base_review_gate = "logs\\zero_base_review_gate_old_japanese_0_1b.json"
+clean_eval_overlap = "python scripts\\check_eval_contamination.py --train data\\kobun_worldclass_corpus.txt data\\kobun_labeled_grammar_train.txt data\\kobun_labeled_grammar_boost_train.txt --eval data\\eval\\clean_current\\grammar_minimal_pairs.jsonl data\\eval\\clean_current\\grammar_minimal_pairs_heldout.jsonl data\\eval\\clean_current\\morphology_adversarial_cases.jsonl"
+clean_eval_source_overlap = "python scripts\\check_eval_source_overlap.py --manifest data\\corpus_manifest.jsonl --eval data\\eval\\clean_current\\grammar_minimal_pairs.jsonl data\\eval\\clean_current\\grammar_minimal_pairs_heldout.jsonl data\\eval\\clean_current\\morphology_adversarial_cases.jsonl data\\eval\\clean_current\\grammar_constraint_cases.jsonl data\\eval\\clean_current\\waka_rule_cases.jsonl data\\eval\\clean_current\\waka_meter_constraint_cases.jsonl data\\eval\\clean_current\\waka_generation_prompts.jsonl"
+primary_eval_overlap = "python scripts\\check_eval_contamination.py --train <checkpoint training data> --eval data\\eval\\grammar_minimal_pairs.jsonl data\\eval\\grammar_minimal_pairs_heldout.jsonl data\\eval\\morphology_adversarial_cases.jsonl"
+primary_eval_source_overlap = "python scripts\\check_eval_source_overlap.py --manifest <checkpoint snapshot corpus_manifest.jsonl> --eval data\\eval\\grammar_minimal_pairs.jsonl data\\eval\\grammar_minimal_pairs_heldout.jsonl data\\eval\\morphology_adversarial_cases.jsonl data\\eval\\grammar_constraint_cases.jsonl data\\eval\\waka_rule_cases.jsonl data\\eval\\waka_meter_constraint_cases.jsonl data\\eval\\waka_generation_prompts.jsonl"
+split_leakage = "python scripts\\check_split_leakage.py --manifest <checkpoint snapshot corpus_manifest.jsonl> --train <checkpoint training data>"
+checkpoint_metadata_gate = "python scripts\\check_checkpoint_model_size.py --checkpoint <checkpoint> --strict-config --require-release-prefix old-japanese-0.1B --fail-on-val-oov --require-from-scratch --require-seed --require-optimizer simple-adamw"
+dml_checkpoint_metadata_gate = "python scripts\\check_checkpoint_model_size.py --checkpoint <checkpoint> --strict-config --require-release-prefix old-japanese-0.1B --fail-on-val-oov --require-from-scratch --require-seed --require-optimizer simple-adamw --require-backend dml"
+checkpoint_input_gate = "python scripts\\check_checkpoint_training_inputs.py --checkpoint <checkpoint> --require-val-data --require-test-data --require-from-scratch --require-run-snapshot --allow-same-run-resume"
+source_bound_model_eval = "python scripts\\eval_heldout_lm.py --checkpoint <checkpoint> --data <checkpoint test data> --split-name test --max-loss 8.0"
+eval_evidence_snapshot = "python scripts\\snapshot_eval_files.py --out-dir logs\\eval_snapshots\\<checkpoint> --named primary=<clean eval> --named heldout=<clean heldout eval> --named morphology=<clean morphology eval>"
+
+[forbidden]
+share_recent_patch_with_reviewers = true
+auto_hf_export = true
+fallback_to_other_run_checkpoint = true
+release_checkpoint_with_validation_oov = true
+release_checkpoint_without_independent_test_split = true
+release_checkpoint_without_release_name = true
+publish_raw_or_training_text = true
+count_contaminated_eval_as_release_evidence = true
+
+[review_prompt]
+template = """
+Review <repo_root> from scratch.
+Do not edit files. Do not assume prior conversation context.
+
+Project purpose: build old-japanese-0.1B, a from-scratch local classical Japanese LLM, with public/copyable corpus provenance, clean evaluation, reproducibility, and safe manual release preparation.
+
+Assigned scope: {scope}
+
+Check for blockers in your assigned scope. List concrete file paths, reasons, and recommended fixes for every blocker you find. If you do not find blockers, write your assessment in your own words and mention any residual risks. Do not use prescribed wording.
+"""

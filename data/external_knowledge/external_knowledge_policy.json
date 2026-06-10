@@ -1,0 +1,17 @@
+{
+  "policy_id": "external_kobun_knowledge_policy_v1",
+  "raw_external_text_training": "forbidden",
+  "modern_explanatory_japanese_training": "forbidden",
+  "allowed_training_material": [
+    "explicitly_allowlisted_classical_surfaces",
+    "rule_constraints",
+    "project_authored_paraphrase",
+    "structured_grammar_cards"
+  ],
+  "required_fields": [
+    "source_ids",
+    "training_use"
+  ],
+  "release_package_raw_text": "forbidden",
+  "primary_kgi": "test_lm_token_nll"
+}

@@ -1,0 +1,25 @@
+{
+  "schema_name": "kobun_chj_unidic_like",
+  "note": "Local CHJ/UniDic-style schema. This is not a CHJ dump; it is a small project-owned morphology SSOT shaped after CHJ/UniDic fields.",
+  "fields": [
+    "surface",
+    "lemma",
+    "pos",
+    "subpos",
+    "conjugation_type",
+    "conjugation_form",
+    "reading",
+    "pronunciation",
+    "orthographic_base",
+    "period",
+    "style",
+    "grammar_tags"
+  ],
+  "unit_notes": [
+    "short_unit is used for grammar evaluation: particles, auxiliaries, inflection.",
+    "long_unit is used for collocation/style chunks.",
+    "surface/search by 書字形出現形 keeps spelling and inflection.",
+    "lemma/search by 語彙素 absorbs orthographic and inflectional variation.",
+    "string search is used first when the local unit split or lemma is uncertain."
+  ]
+}

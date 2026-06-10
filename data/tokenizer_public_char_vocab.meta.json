@@ -1,0 +1,72 @@
+{
+  "policy": "train_split_plus_core_japanese_inventory_plus_utf8_byte_fallback_v1",
+  "split_policy": "work_group_genji_reference_v1",
+  "byte_fallback": true,
+  "byte_fallback_encoding": "utf-8",
+  "byte_fallback_tokens": 256,
+  "manifest": "data\\corpus_manifest.jsonl",
+  "manifest_sha256": "307c76012a822b8204c2dff11cbfbb9c658b8370bfdd814582647e9db4793525",
+  "val_ratio": 0.1,
+  "test_ratio": 0.05,
+  "train_source_count": 76,
+  "included_manifest_rows": 127,
+  "core_inventory_enabled": true,
+  "core_inventory_ranges": [
+    {
+      "name": "Basic Latin source markup",
+      "start": "U+0020",
+      "end": "U+007E"
+    },
+    {
+      "name": "General Punctuation source marks",
+      "start": "U+2000",
+      "end": "U+206F"
+    },
+    {
+      "name": "Arrows source marks",
+      "start": "U+2190",
+      "end": "U+21FF"
+    },
+    {
+      "name": "Geometric Shapes source marks",
+      "start": "U+25A0",
+      "end": "U+25FF"
+    },
+    {
+      "name": "CJK Symbols and Punctuation",
+      "start": "U+3000",
+      "end": "U+303F"
+    },
+    {
+      "name": "Hiragana",
+      "start": "U+3040",
+      "end": "U+309F"
+    },
+    {
+      "name": "Katakana",
+      "start": "U+30A0",
+      "end": "U+30FF"
+    },
+    {
+      "name": "Kanbun",
+      "start": "U+3190",
+      "end": "U+319F"
+    },
+    {
+      "name": "Katakana Phonetic Extensions",
+      "start": "U+31F0",
+      "end": "U+31FF"
+    },
+    {
+      "name": "Halfwidth and Fullwidth Forms",
+      "start": "U+FF00",
+      "end": "U+FFEF"
+    }
+  ],
+  "core_inventory_chars": 943,
+  "direct_vocab_chars": 3031,
+  "estimated_total_vocab_with_byte_fallback_and_unk": 3288,
+  "vocab_sha256": "05670601b05fdfafee5fd4343a7502fa1df7224f541548ebee6916517e3efdac",
+  "core_inventory_sha256": "51b1a150ac42200d3cd73e69238cc73598d959f99f16905e78a6c27e050e4bbe",
+  "vocab_hash_policy": "sha256_raw_utf8_bytes"
+}

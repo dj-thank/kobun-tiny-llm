@@ -1,0 +1,8 @@
+{"prompt": "人こそ", "good": "知らね。", "bad": "知らぬ。", "rule_ids": ["kakari_koso_izen"], "explanation": "こそ requires 已然形"}
+{"prompt": "昔なむ", "good": "恋しき。", "bad": "恋し。", "rule_ids": ["kakari_namu_rentai"], "explanation": "なむ requires 連体形"}
+{"prompt": "誰や", "good": "来る。", "bad": "来けり。", "rule_ids": ["kakari_ya_ka_rentai"], "explanation": "や requires 連体形"}
+{"prompt": "鳥こそ", "good": "鳴け。", "bad": "鳴く。", "rule_ids": ["kakari_koso_izen"], "explanation": "こそ requires 已然形"}
+{"prompt": "雲ぞ", "good": "わたる。", "bad": "わたれ。", "rule_ids": ["kakari_zo_rentai"], "explanation": "ぞ requires 連体形"}
+{"prompt": "里なむ", "good": "静かなる。", "bad": "静かなり。", "rule_ids": ["kakari_namu_rentai"], "explanation": "なむ requires 連体形"}
+{"prompt": "いかにか", "good": "思ふらむ。", "bad": "思ひけり。", "rule_ids": ["kakari_ya_ka_rentai"], "explanation": "か requires 連体形"}
+{"prompt": "何をや", "good": "尋ぬる。", "bad": "尋ねけり。", "rule_ids": ["kakari_ya_ka_rentai"], "explanation": "や requires 連体形"}

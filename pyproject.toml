@@ -1,0 +1,25 @@
+[project]
+name = "kobun-tiny-llm"
+version = "0.1.0"
+description = "A tiny from-scratch GPT-style language model for classical Japanese experiments."
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.0",
+]
+
+[project.optional-dependencies]
+release = [
+  "packaging>=24",
+  "safetensors>=0.4",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["kobun_llm*", "kobun_autonomy*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

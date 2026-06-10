@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "rule_set_id": "genji_era_honorifics_v1",
+  "period_scope_policy": "period_scope_policy_genji_era_v1",
+  "canonical_sources": [
+    "data/grammar/rules.jsonl",
+    "data/grammar/morph_examples.jsonl",
+    "data/grammar/morph_lexicon.jsonl"
+  ],
+  "role": "project_authored_rule_table",
+  "release_evidence_role": "diagnostic_and_smoke_gate",
+  "required_markers": [
+    "御",
+    "たまふ",
+    "おはす",
+    "おはします",
+    "思す",
+    "聞こゆ",
+    "聞こえ"
+  ],
+  "diagnostic_notes": [
+    "Honorific quality is a soft diagnostic unless backed by explicit smoke cases.",
+    "Do not count later medieval honorific drift as Genji-era release grammar evidence."
+  ],
+  "llm_generated_corpus_text": false
+}

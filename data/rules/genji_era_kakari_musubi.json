@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "rule_set_id": "genji_era_kakari_musubi_v1",
+  "period_scope_policy": "period_scope_policy_genji_era_v1",
+  "canonical_source": "data/grammar/rules.jsonl",
+  "role": "project_authored_rule_table",
+  "release_evidence_role": "smoke_regression_gate",
+  "required_triggers": {
+    "ぞ": "連体形",
+    "なむ": "連体形",
+    "や": "連体形",
+    "か": "連体形",
+    "こそ": "已然形"
+  },
+  "minimum_allowed_endings": {
+    "連体形": [
+      "く",
+      "き",
+      "む",
+      "る"
+    ],
+    "已然形": [
+      "れ",
+      "たれ",
+      "けれ",
+      "なれ"
+    ]
+  },
+  "llm_generated_corpus_text": false
+}

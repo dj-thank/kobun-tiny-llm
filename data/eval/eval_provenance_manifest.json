@@ -1,0 +1,85 @@
+{
+  "schema": "old_japanese_eval_provenance_manifest_v1",
+  "period_scope": "genji_era_heian_middle",
+  "llm_generated_eval_answer_text": false,
+  "policy": "Eval files are smoke/regression gates or decoder-path diagnostics. They are not model-competence release metrics; checkpoint-bound test_lm_token_nll is the model-facing release metric.",
+  "entries": [
+    {
+      "path": "data/eval/grammar_minimal_pairs.jsonl",
+      "role": "grammar_primary",
+      "release_evidence_role": "smoke_regression_gate",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored rule contrast examples from project grammar policy",
+      "copyability_status": "project-authored evaluative examples; no upstream prose copied",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "eb9bba36de2c404da0bf7f59fd9aa6407fe129066548be3ba64e081b76792430",
+      "row_count": 8
+    },
+    {
+      "path": "data/eval/grammar_minimal_pairs_heldout.jsonl",
+      "role": "grammar_heldout",
+      "release_evidence_role": "smoke_regression_gate",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored heldout rule contrast examples from project grammar policy",
+      "copyability_status": "project-authored evaluative examples; no upstream prose copied",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "e865371078824f4450282a9891a19aa7685db5442c12709dd9f39dee6b0436e6",
+      "row_count": 12
+    },
+    {
+      "path": "data/eval/morphology_adversarial_cases.jsonl",
+      "role": "morphology_adversarial",
+      "release_evidence_role": "smoke_regression_gate",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored parser adversarial checks for false positives and required surfaces",
+      "copyability_status": "project-authored evaluative examples; no upstream prose copied",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "b8f9648b15c00804b406b2eb3c8718719a111a2ed4088c7d6a8b2f88eb4006d7",
+      "row_count": 5
+    },
+    {
+      "path": "data/eval/grammar_constraint_cases.jsonl",
+      "role": "grammar_constraints",
+      "release_evidence_role": "smoke_regression_gate",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored next-token constraint checks derived from Genji-era grammar SSOT",
+      "copyability_status": "project-authored evaluative contexts; no upstream prose copied",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "38d0091994d30bde0cb2eead33ef10cf21996a13ea388602ea3207b999050901",
+      "row_count": 28
+    },
+    {
+      "path": "data/eval/waka_rule_cases.jsonl",
+      "role": "waka_rules",
+      "release_evidence_role": "smoke_regression_gate",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored waka rule checks for meter and project rule logic",
+      "copyability_status": "project-authored evaluative examples; no release package includes these rows",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "2894c8b7f42e37f090e9ccf641c269551ff60a9665c17d4a2b77b8e21db84e4d",
+      "row_count": 20
+    },
+    {
+      "path": "data/eval/waka_meter_constraint_cases.jsonl",
+      "role": "waka_meter_constraints",
+      "release_evidence_role": "smoke_regression_gate",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored decoder invariant checks for 5-7-5-7-7 waka meter constraints",
+      "copyability_status": "project-authored evaluative examples; no upstream waka copied",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "03c2904530f21311a815adda944e4c3d623dc3a11f29054771a2fa77e8bdb4a5",
+      "row_count": 19
+    },
+    {
+      "path": "data/eval/waka_generation_prompts.jsonl",
+      "role": "waka_generation_prompts",
+      "release_evidence_role": "decoder_path_smoke",
+      "source_type": "project_authored_smoke_eval",
+      "authoring_method": "human-authored kana prompts selected by contamination gate",
+      "copyability_status": "project-authored evaluative prompts; no upstream waka copied",
+      "llm_generated_eval_answer_text": false,
+      "file_sha256": "5d7440331f650702627106591a9bc787454be4004c2c6e416010b413996c7b17",
+      "row_count": 4
+    }
+  ]
+}

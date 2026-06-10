@@ -1,0 +1,120 @@
+{
+  "schema": "old_japanese_training_augmentation_manifest_v1",
+  "attestation": "These augmentation sources are project-authored rule tables or train-split-derived control text. They are not LLM-generated corpus text.",
+  "llm_generated_corpus_text": false,
+  "entries": [
+    {
+      "path": "data/grammar/kobun_grammar_rules.txt",
+      "role": "grammar_rule_text",
+      "source_type": "project_authored_rule_table",
+      "repeat_count": 8,
+      "used_by": "scripts/build_training_corpus.py --grammar-repeat",
+      "sha256": "62c08e4f38c4f051bb85861f4bee7082da8ea6f1434b7f54d1bae8e7428a6cd3",
+      "bytes": 3848,
+      "lines": 92,
+      "copyability_status": "project-authored, repo-local release rules",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    },
+    {
+      "path": "data/grammar/morph_examples.txt",
+      "role": "morphology_examples",
+      "source_type": "project_authored_rule_table",
+      "repeat_count": 12,
+      "used_by": "scripts/build_training_corpus.py --morph-repeat",
+      "sha256": "657c4011768256e804d2aab3c9c952b43017637e0e6bdd10daa854da66e5b2a0",
+      "bytes": 4477,
+      "lines": 62,
+      "copyability_status": "project-authored, repo-local release rules",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    },
+    {
+      "path": "data/grammar/train_preference_pairs.jsonl",
+      "role": "train_preference_pairs",
+      "source_type": "project_authored_preference_pairs",
+      "repeat_count": 80,
+      "used_by": "scripts/build_preference_boost_corpus.py --repeat",
+      "sha256": "4efdcd3cf7204544229f262bb5eb61052ed27c6dfc02fc177e6c0b7b04ab2b88",
+      "bytes": 1448,
+      "lines": 10,
+      "copyability_status": "project-authored, repo-local release rules",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    },
+    {
+      "path": "data/waka/waka_meter_corpus.txt",
+      "role": "waka_meter_training_text",
+      "source_type": "derived_from_train_split_public_waka_records",
+      "repeat_count": 8,
+      "used_by": "scripts/build_worldclass_corpus.py --waka-meter-repeat",
+      "sha256": "1f91e3eecc6a0d86afe4c470265cbd51483a5fc3c121dea57d65ce355b582cfc",
+      "bytes": 79398,
+      "lines": 802,
+      "copyability_status": "derived only from public train-split records; no validation/test items",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    },
+    {
+      "path": "data/grammar/auxiliary_rules.jsonl",
+      "role": "auxiliary_rule_table",
+      "source_type": "project_authored_rule_table",
+      "repeat_count": 6,
+      "used_by": "scripts/build_worldclass_corpus.py --rule-repeat",
+      "sha256": "8440665d98de99cd3d0352d763e061fce474cea59281e3b9050774752489ee44",
+      "bytes": 9469,
+      "lines": 28,
+      "copyability_status": "project-authored, repo-local release rules",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    },
+    {
+      "path": "data/grammar/genre_rules.jsonl",
+      "role": "genre_rule_table",
+      "source_type": "project_authored_rule_table",
+      "repeat_count": 6,
+      "used_by": "scripts/build_worldclass_corpus.py --rule-repeat",
+      "sha256": "05b6276ae96ea0b87f6d1b55b3607d93b09be0c527bfa5e92bff79240bba3097",
+      "bytes": 22745,
+      "lines": 95,
+      "copyability_status": "project-authored, repo-local release rules",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    },
+    {
+      "path": "data/external_knowledge/classical_surface_patterns.txt",
+      "role": "external_knowledge_surface_patterns",
+      "source_type": "project_authored_rule_table",
+      "repeat_count": 4,
+      "used_by": "scripts/build_worldclass_corpus.py --external-surface-repeat",
+      "sha256": "fe5c01c47bc6aa281b9da88c08ce4b61f1c457fc798ec76fd8b62ae142696c53",
+      "bytes": 2465,
+      "lines": 194,
+      "copyability_status": "project-authored, repo-local release rules",
+      "llm_generated_corpus_text": false,
+      "public_release_policy": "publish hashes/roles/repeat counts only; do not publish training text"
+    }
+  ],
+  "transform_scripts": [
+    {
+      "path": "scripts/build_training_corpus.py",
+      "sha256": "03172efcf83e568729989642bc3bd7ab22d44156f75703ac6d33efb0e7ec93a0"
+    },
+    {
+      "path": "scripts/build_preference_boost_corpus.py",
+      "sha256": "6d8f3bcfcb2cfc74a26b639da354804e95e5c7ce37a40cbe6bc94252631397b7"
+    },
+    {
+      "path": "scripts/build_worldclass_corpus.py",
+      "sha256": "509f0d66f79d1f53da2b428c94a696b8fd43038469fb9cbd023e8887ef9a20a7"
+    },
+    {
+      "path": "scripts/build_waka_meter_corpus.py",
+      "sha256": "d9a6d57fba579f8f1286fd352347ca9f8a7bb0d14272fb064098321dfc5ce48e"
+    },
+    {
+      "path": "scripts/build_external_knowledge_surface_patterns.py",
+      "sha256": "c9a2c19dd3739dd76c6e05a25b4c13414ca1eae72ce620eed4a86f9d98c6fe1f"
+    }
+  ]
+}
