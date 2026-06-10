@@ -54,7 +54,7 @@ def main() -> None:
         "hf_export": False,
     }
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"static_quality_manifest_written={out.relative_to(ROOT)}")
     print(f"static_quality_manifest_status={args.status}")
 

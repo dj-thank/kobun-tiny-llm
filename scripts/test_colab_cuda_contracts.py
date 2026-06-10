@@ -68,6 +68,12 @@ def main() -> None:
 
     require_contains(STARTER, "old_japanese_0_1b_cuda_")
     require_contains(STARTER, "old_japanese_0_1b_cuda_colab_launch_context_v1")
+    require_contains(STARTER, "old_japanese_0_1b_supervised_cuda_launch_context_v1")
+    require_contains(STARTER, "--cuda-provider")
+    require_contains(STARTER, "choices=[\"colab\", \"gcp\"]")
+    require_contains(STARTER, "supervised_cuda_training")
+    require_contains(STARTER, "gcp_active_old_japanese_0_1b_cuda")
+    require_contains(STARTER, 'path.name.startswith("gcp_")')
     require_contains(STARTER, "google_credentials_read")
     require_contains(STARTER, "hf_export")
     require_contains(STARTER, "scripts/verify_preflight_gate.py")
@@ -100,6 +106,7 @@ def main() -> None:
     require_contains(STARTER, "suffix = \"finished\" if state == \"finished\" else \"failed_non_release\"")
     require_contains(STARTER, "active_old_japanese_0_1b_training.lock")
     require_contains(STARTER, "supervised_training_processes")
+    require_contains(STARTER, "def current_process_tree_ids")
     require_contains(STARTER, "def supervised_wrapper_command")
     require_contains(STARTER, "assert_no_other_supervised_training(run_id)")
     require_contains(STARTER, "cuda_like_train_command")
@@ -117,8 +124,15 @@ def main() -> None:
     build_index = starter_text.find("\"scripts/build_waka_training_corpus.py\"")
     if lock_index < 0 or build_index < 0 or lock_index > build_index:
         raise SystemExit("CUDA active lock must be acquired before mutable corpus/snapshot build commands")
+    refresh_calls = starter_text.count("refresh_colab_lease(") - 1  # exclude the function definition
+    refresh_provider_args = starter_text.count("cuda_provider=cuda_provider")
+    if refresh_calls < 2 or refresh_provider_args < refresh_calls:
+        raise SystemExit("all CUDA lease refresh calls must bind cuda_provider")
 
     require_contains(ENV_CHECK, "torch.cuda.is_available()")
+    require_contains(ENV_CHECK, "old_japanese_0_1b_supervised_cuda_environment_v1")
+    require_contains(ENV_CHECK, "cuda_provider")
+    require_contains(ENV_CHECK, "gcp_compute_hint")
     require_contains(ENV_CHECK, "torch_hip_version")
     require_contains(ENV_CHECK, "cuda_runtime_kind")
     require_contains(ENV_CHECK, "real_cuda_runtime")
@@ -134,6 +148,9 @@ def main() -> None:
     require_contains(BUNDLE, "Handoff docs, assistant thread URIs")
     require_contains(ROOT / "scripts" / "old_japanese_run_intel.py", "def colab_cuda_lease_health")
     require_contains(ROOT / "scripts" / "old_japanese_run_intel.py", "colab_cuda_lease_active")
+    require_contains(ROOT / "scripts" / "old_japanese_run_intel.py", "gcp_active_old_japanese_0_1b_cuda")
+    require_contains(ROOT / "scripts" / "old_japanese_run_intel.py", "old_japanese_0_1b_supervised_cuda_active_lease_v1")
+    require_contains(ROOT / "scripts" / "check_run_completion.py", "gcp_active_old_japanese_0_1b_cuda")
     require_contains(ROOT / "scripts" / "update_evaluation_board.py", "colab_cuda_lease_health")
     spec = importlib.util.spec_from_file_location("create_colab_sync_bundle", BUNDLE)
     if spec is None or spec.loader is None:
@@ -187,6 +204,8 @@ def main() -> None:
     require_contains(TRAIN, "old_japanese_0_1b_cuda_")
     require_contains(TRAIN, "start_old_japanese_0_1b_cuda_colab_and_watch.py")
     require_contains(TRAIN, "old_japanese_0_1b_cuda_colab_launch_context_v1")
+    require_contains(TRAIN, "old_japanese_0_1b_supervised_cuda_launch_context_v1")
+    require_contains(TRAIN, "supervised_cuda_training")
     print("colab_cuda_contracts_ok=true")
 
 

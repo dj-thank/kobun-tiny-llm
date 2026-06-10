@@ -5,7 +5,7 @@
   "byte_fallback_encoding": "utf-8",
   "byte_fallback_tokens": 256,
   "manifest": "data/corpus_manifest.jsonl",
-  "manifest_sha256": "424b01e527fb86b6fc87b67e313cd6bf5f13dc5e1caca12025362dbc9c5a7f6a",
+  "manifest_sha256": "4cd5908d3a0b1c1fc94ac3176e8839e81fb1c4ca480bceb01cb19ad25fe0f3cd",
   "val_ratio": 0.1,
   "test_ratio": 0.05,
   "train_source_count": 76,

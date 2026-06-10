@@ -95,7 +95,11 @@ def main() -> None:
         "vocab_hash_policy": "sha256_raw_utf8_bytes",
     }
     args.meta_out.parent.mkdir(parents=True, exist_ok=True)
-    args.meta_out.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.meta_out.write_text(
+        json.dumps(meta, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     print(
         f"wrote {args.out} chars={len(chars)} train_sources={train_source_count} "
         f"core_inventory={len(core_chars)} byte_fallback_tokens=256 meta={args.meta_out}"

@@ -56,6 +56,11 @@ docs/               設計、データ方針、公開監査メモ
 
 `scripts/` は実行用の entrypoint 群です。データ準備、評価、監査、training supervisor、release gate、将来の export preparation などを担当します。
 
+CUDA 学習は supervised CUDA provider として扱います。
+`scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py` は、互換性のために Colab 名を残していますが、`--cuda-provider colab` と `--cuda-provider gcp` を受け付ける supervised launcher です。
+GCP VM で実行する場合も、preflight gate、zero-base review gate、active lock、launch token、run-id unused guard、post-run quality check、non-release record を Colab と同じ contract で要求します。
+GCP provider の実行証跡は `gcp_active_old_japanese_0_1b_cuda.*.json` と `gcp_cuda_launch_context_*.json` に分けて記録し、Colab の証跡と混同しないようにします。
+
 長期的には、`scripts/` は薄い CLI wrapper に寄せ、重要な policy や contract は `kobun_autonomy` に移す方針です。
 
 ## データと評価の境界

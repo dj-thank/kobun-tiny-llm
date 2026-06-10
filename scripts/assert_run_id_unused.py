@@ -266,6 +266,7 @@ def main() -> None:
             (ROOT / "logs" / f"watch_finalize_{run_id}.log").resolve(),
             (ROOT / "logs" / f"autonomous_launch_context_{run_id}.json").resolve(),
             (ROOT / "logs" / f"colab_cuda_launch_context_{run_id}.json").resolve(),
+            (ROOT / "logs" / f"gcp_cuda_launch_context_{run_id}.json").resolve(),
         }
         found = [
             path

@@ -709,6 +709,7 @@ def active_lock_health(root: Path) -> dict[str, Any]:
 
 def colab_cuda_lease_health(root: Path) -> dict[str, Any]:
     paths = sorted((root / "logs").glob("colab_active_old_japanese_0_1b_cuda.*.json"))
+    paths.extend(sorted((root / "logs").glob("gcp_active_old_japanese_0_1b_cuda.*.json")))
     active: list[dict[str, Any]] = []
     quarantined: list[str] = []
     errors: list[str] = []
@@ -729,8 +730,15 @@ def colab_cuda_lease_health(root: Path) -> dict[str, Any]:
         run_id = str(payload.get("run_id") or "")
         state = str(payload.get("state") or "")
         expires_text = str(payload.get("lease_expires_at_utc") or "")
-        if payload.get("schema") != "old_japanese_0_1b_colab_cuda_active_lease_v1":
+        if payload.get("schema") not in {
+            "old_japanese_0_1b_colab_cuda_active_lease_v1",
+            "old_japanese_0_1b_supervised_cuda_active_lease_v1",
+        }:
             errors.append(f"{path.name}:invalid_schema")
+            continue
+        cuda_provider = str(payload.get("cuda_provider") or ("gcp" if path.name.startswith("gcp_") else "colab"))
+        if cuda_provider not in {"colab", "gcp"}:
+            errors.append(f"{path.name}:invalid_cuda_provider")
             continue
         if not CUDA_RUN_RE.fullmatch(run_id):
             errors.append(f"{path.name}:invalid_run_id")
@@ -769,6 +777,7 @@ def colab_cuda_lease_health(root: Path) -> dict[str, Any]:
                 "launcher_pid": launcher_pid,
                 "train_live": train_live,
                 "launcher_live": launcher_live,
+                "cuda_provider": cuda_provider,
                 "lease_expires_at_utc": expires.isoformat(),
                 "artifact_root": str(payload.get("artifact_root") or ""),
             }

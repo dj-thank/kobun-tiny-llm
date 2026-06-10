@@ -163,8 +163,8 @@ def build_packet(root: Path, board: dict[str, Any], run_id: str, next_action: di
 def write_packet(packet: dict[str, Any], out_dir: Path, docs_dir: Path, stem: str) -> tuple[Path, Path]:
     out_json = out_dir / f"{stem}.json"
     out_md = docs_dir / f"INDEPENDENT_REVIEW_PACKET_{stem}.md"
-    out_json.write_text(json.dumps(packet, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    out_md.write_text(render_md(packet), encoding="utf-8")
+    out_json.write_text(json.dumps(packet, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    out_md.write_text(render_md(packet), encoding="utf-8", newline="\n")
     return out_json, out_md
 
 

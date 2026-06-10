@@ -112,6 +112,16 @@ source manifest は、どの公開資料を参照したか、どのような has
 
 型付き contract は `src/kobun_autonomy/types.py` に集約しています。評価 board、run 分類、release evidence、autonomous action などを同じ形で扱うことで、script 間の意味のずれを減らします。
 
+### supervised CUDA provider
+
+CUDA 学習は、直接 `kobun_llm.train` を叩くのではなく、必ず supervisor 経由で起動します。
+`scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py` は名前に `colab` を残していますが、実体は supervised CUDA launcher です。
+`--cuda-provider colab` と `--cuda-provider gcp` を明示でき、どちらも同じ preflight gate、zero-base review gate、active lock、launch token、run-id unused guard、post-run quality check、non-release record を要求します。
+
+GCP VM で走らせる場合も、Colab の近道として扱いません。
+GCP は `gcp_active_old_japanese_0_1b_cuda.*.json` と `gcp_cuda_launch_context_*.json` に証跡を残す supervised CUDA provider です。
+provider が GCP でも、LLM/subagent は governance のみで、学習コーパス・評価答え・checkpoint-bound metric の代替にはなりません。
+
 ## Hugging Face への公開方針
 
 モデルが完成したら、Hugging Face への公開を目標にできます。

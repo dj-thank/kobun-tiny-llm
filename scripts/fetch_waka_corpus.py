@@ -197,7 +197,11 @@ def parse_waka_records(text: str, source_title: str) -> list[dict[str, str]]:
 
 
 def write_jsonl(path: Path, rows: list[dict[str, str]]) -> None:
-    path.write_text("\n".join(json.dumps(row, ensure_ascii=False) for row in rows) + "\n", encoding="utf-8")
+    path.write_text(
+        "\n".join(json.dumps(row, ensure_ascii=False) for row in rows) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def fetch_wikisource_title(title: str, out_dir: Path) -> WakaSourceRecord:
@@ -220,13 +224,13 @@ def fetch_wikisource_title(title: str, out_dir: Path) -> WakaSourceRecord:
     records_path = records_dir / f"{stem}.jsonl"
     training_path = training_dir / filename
     readings_path = training_dir / f"{stem}_readings.txt"
-    raw_path.write_text(text, encoding="utf-8")
-    clean_path.write_text(clean_text, encoding="utf-8")
+    raw_path.write_text(text, encoding="utf-8", newline="\n")
+    clean_path.write_text(clean_text, encoding="utf-8", newline="\n")
     write_jsonl(records_path, records)
     poems = "\n".join(record["poem"] for record in records)
     readings = "\n".join(record["reading"] for record in records if record["reading"])
-    training_path.write_text(poems + ("\n" if poems else ""), encoding="utf-8")
-    readings_path.write_text(readings + ("\n" if readings else ""), encoding="utf-8")
+    training_path.write_text(poems + ("\n" if poems else ""), encoding="utf-8", newline="\n")
+    readings_path.write_text(readings + ("\n" if readings else ""), encoding="utf-8", newline="\n")
     page_url = "https://ja.wikisource.org/wiki/" + urllib.parse.quote(title)
     return WakaSourceRecord(
         title=title,

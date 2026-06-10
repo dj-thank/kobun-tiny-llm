@@ -65,7 +65,7 @@ def main() -> None:
         external_surfaces = args.external_surfaces.read_text(encoding="utf-8").strip()
         for index in range(max(0, args.external_surface_repeat)):
             parts.append(f"古語表面形 {index + 1}\n{external_surfaces}")
-    args.out.write_text("\n\n".join(parts) + "\n", encoding="utf-8")
+    args.out.write_text("\n\n".join(parts) + "\n", encoding="utf-8", newline="\n")
     validate_text(args.out, "training")
     print(f"wrote {args.out} bytes={args.out.stat().st_size}")
 

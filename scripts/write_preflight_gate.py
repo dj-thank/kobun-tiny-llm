@@ -226,7 +226,7 @@ def main() -> None:
     }
     if not payload["release_workspace_clean"]:
         raise SystemExit(f"release_workspace_not_clean files={release_state['files']}")
-    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"preflight_gate_written={OUT.relative_to(ROOT)}")
     print(f"preflight_gate_schema={payload['schema']}")
 

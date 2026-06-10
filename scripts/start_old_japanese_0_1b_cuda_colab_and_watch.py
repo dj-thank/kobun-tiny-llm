@@ -52,11 +52,17 @@ def run_id_now() -> str:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Supervised Colab CUDA launcher for old-japanese-0.1B.")
+    parser = argparse.ArgumentParser(description="Supervised CUDA launcher for old-japanese-0.1B.")
     parser.add_argument("--run-id", default="")
     parser.add_argument("--project-root", type=Path, default=ROOT)
     parser.add_argument("--preflight-gate", default="logs/preflight_gate_old_japanese_0_1b.json")
     parser.add_argument("--review-gate", default="logs/zero_base_review_gate_old_japanese_0_1b.json")
+    parser.add_argument(
+        "--cuda-provider",
+        choices=["colab", "gcp"],
+        default="colab",
+        help="Execution provider for the supervised CUDA backend. GCP uses the same release gates as Colab.",
+    )
     parser.add_argument("--allow-start-training", action="store_true")
     parser.add_argument("--reviews-passed", action="store_true")
     parser.add_argument("--steps", type=int, default=8000)
@@ -132,6 +138,13 @@ def supervised_wrapper_command(text: str) -> bool:
     return cuda_like_train_command(text)
 
 
+def cuda_lease_patterns() -> tuple[str, ...]:
+    return (
+        "logs/colab_active_old_japanese_0_1b_cuda.*.json",
+        "logs/gcp_active_old_japanese_0_1b_cuda.*.json",
+    )
+
+
 def active_locks(project_root: Path) -> list[Path]:
     locks = [
         path
@@ -139,11 +152,12 @@ def active_locks(project_root: Path) -> list[Path]:
         for path in [project_root / pattern]
         if path.exists()
     ]
-    for path in sorted((project_root / "logs").glob("colab_active_old_japanese_0_1b_cuda.*.json")):
-        name = path.name
-        if ".finished." in name or ".failed_non_release." in name or ".stale." in name:
-            continue
-        locks.append(path)
+    for pattern in cuda_lease_patterns():
+        for path in sorted(project_root.glob(pattern)):
+            name = path.name
+            if ".finished." in name or ".failed_non_release." in name or ".stale." in name:
+                continue
+            locks.append(path)
     return locks
 
 
@@ -228,8 +242,42 @@ def supervised_training_processes(run_id: str = "", ignore_pids: set[int] | None
     return lines
 
 
+def current_process_tree_ids(limit: int = 12) -> set[int]:
+    ignored = {os.getpid()}
+    pid = os.getpid()
+    for _ in range(limit):
+        parent = 0
+        if sys.platform == "win32":
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-Command",
+                    f"$p=Get-CimInstance Win32_Process -Filter 'ProcessId={pid}'; if($p){{ $p.ParentProcessId }}",
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            try:
+                parent = int(result.stdout.strip() or "0")
+            except ValueError:
+                parent = 0
+        else:
+            stat_path = Path("/proc") / str(pid) / "stat"
+            try:
+                parent = int(stat_path.read_text(encoding="utf-8", errors="replace").split()[3])
+            except (OSError, ValueError, IndexError):
+                parent = 0
+        if parent <= 0 or parent in ignored:
+            break
+        ignored.add(parent)
+        pid = parent
+    return ignored
+
+
 def assert_no_other_supervised_training(run_id: str) -> None:
-    live = supervised_training_processes(run_id=run_id, ignore_pids={os.getpid(), os.getppid()})
+    live = supervised_training_processes(run_id=run_id, ignore_pids=current_process_tree_ids())
     if live:
         raise SystemExit("refusing to start CUDA run while another supervised old_japanese_0_1b process is live:\n" + "\n".join(live[:5]))
 
@@ -323,6 +371,12 @@ def colab_lease_path(project_root: Path, run_id: str) -> Path:
     return project_root / "logs" / f"colab_active_old_japanese_0_1b_cuda.{run_id}.json"
 
 
+def cuda_lease_path(project_root: Path, run_id: str, provider: str) -> Path:
+    if provider == "gcp":
+        return project_root / "logs" / f"gcp_active_old_japanese_0_1b_cuda.{run_id}.json"
+    return colab_lease_path(project_root, run_id)
+
+
 def lease_payload(
     *,
     run_id: str,
@@ -333,13 +387,20 @@ def lease_payload(
     preflight: Path,
     review: Path,
     context_path: Path,
+    cuda_provider: str,
     expires_minutes: int = 360,
 ) -> dict[str, Any]:
     now = datetime.now(timezone.utc)
+    schema = (
+        "old_japanese_0_1b_colab_cuda_active_lease_v1"
+        if cuda_provider == "colab"
+        else "old_japanese_0_1b_supervised_cuda_active_lease_v1"
+    )
     return {
-        "schema": "old_japanese_0_1b_colab_cuda_active_lease_v1",
+        "schema": schema,
         "run_id": run_id,
         "backend": "cuda",
+        "cuda_provider": cuda_provider,
         "state": state,
         "created_or_updated_at_utc": now.isoformat(),
         "heartbeat_at_utc": now.isoformat(),
@@ -376,6 +437,7 @@ def refresh_colab_lease(
     preflight: Path,
     review: Path,
     context_path: Path,
+    cuda_provider: str,
 ) -> None:
     write_colab_lease(
         path,
@@ -388,6 +450,7 @@ def refresh_colab_lease(
             preflight=preflight,
             review=review,
             context_path=context_path,
+            cuda_provider=cuda_provider,
         ),
     )
 
@@ -403,7 +466,8 @@ def archive_colab_lease(path: Path, *, state: str, reason: str) -> Path | None:
     payload["hf_export"] = False
     suffix = "finished" if state == "finished" else "failed_non_release"
     run_id = str(payload.get("run_id") or "unknown")
-    archive = path.with_name(f"colab_active_old_japanese_0_1b_cuda.{run_id}.{suffix}.{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+    prefix = "gcp_active_old_japanese_0_1b_cuda" if path.name.startswith("gcp_") else "colab_active_old_japanese_0_1b_cuda"
+    archive = path.with_name(f"{prefix}.{run_id}.{suffix}.{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
     write_json_atomic(archive, payload)
     path.unlink()
     return archive
@@ -469,23 +533,39 @@ def main() -> None:
     args = parse_args()
     project_root = args.project_root.resolve()
     os.chdir(project_root)
+    cuda_provider = args.cuda_provider
+    cuda_context = f"supervised CUDA {cuda_provider}"
     if not args.run_id:
-        raise SystemExit("Refusing CUDA Colab launch without explicit --run-id.")
+        raise SystemExit("Refusing supervised CUDA launch without explicit --run-id.")
     if args.skip_post_run_quality and not args.allow_no_cuda:
-        raise SystemExit("Refusing real CUDA Colab launch with --skip-post-run-quality; that flag is dry-run only.")
+        raise SystemExit("Refusing real supervised CUDA launch with --skip-post-run-quality; that flag is dry-run only.")
     run_id = args.run_id
     if not RUN_ID_RE.fullmatch(run_id):
         raise SystemExit(f"invalid CUDA RunId: {run_id}")
     if not args.allow_start_training:
-        raise SystemExit("Refusing CUDA Colab launch without --allow-start-training.")
+        raise SystemExit("Refusing supervised CUDA launch without --allow-start-training.")
     if not args.reviews_passed:
-        raise SystemExit("Refusing CUDA Colab launch without --reviews-passed.")
+        raise SystemExit("Refusing supervised CUDA launch without --reviews-passed.")
 
     py = sys.executable
-    run_checked([py, "-c", "from kobun_autonomy.release_policy import require_release_candidate_run; import sys; require_release_candidate_run(sys.argv[1], context='CUDA Colab supervisor')", run_id])
+    run_checked([py, "-c", "from kobun_autonomy.release_policy import require_release_candidate_run; import sys; require_release_candidate_run(sys.argv[1], context=sys.argv[2])", run_id, cuda_context])
     run_checked([py, "scripts/verify_preflight_gate.py", "--gate", args.preflight_gate, "--max-age-minutes", "240"])
     run_checked([py, "scripts/verify_zero_base_review_gate.py", "--gate", args.review_gate, "--preflight-gate", args.preflight_gate, "--max-age-minutes", "240"])
-    run_checked([py, "scripts/check_colab_cuda_environment.py", "--project-root", str(project_root), "--preflight-gate", args.preflight_gate, "--review-gate", args.review_gate] + (["--allow-no-cuda"] if args.allow_no_cuda else []))
+    run_checked(
+        [
+            py,
+            "scripts/check_colab_cuda_environment.py",
+            "--project-root",
+            str(project_root),
+            "--preflight-gate",
+            args.preflight_gate,
+            "--review-gate",
+            args.review_gate,
+            "--cuda-provider",
+            cuda_provider,
+        ]
+        + (["--allow-no-cuda"] if args.allow_no_cuda else [])
+    )
     run_checked([py, "scripts/assert_run_id_unused.py", "--run-id", run_id])
     assert_no_active_colab_cuda_lease(project_root)
     assert_no_other_supervised_training(run_id)
@@ -495,7 +575,7 @@ def main() -> None:
     if existing_locks:
         raise SystemExit(f"refusing to start CUDA run while active lock exists: {existing_locks}")
     if args.allow_no_cuda:
-        print(f"cuda_colab_supervisor_dry_run_ok=true run_id={run_id}")
+        print(f"supervised_cuda_supervisor_dry_run_ok=true provider={cuda_provider} run_id={run_id}")
         return
 
     preflight = ensure_under_repo(project_root, args.preflight_gate)
@@ -503,14 +583,25 @@ def main() -> None:
     launch_nonce = hashlib.sha256(os.urandom(32)).hexdigest()
     launch_token = hashlib.sha256(os.urandom(32)).hexdigest() + hashlib.sha256(os.urandom(32)).hexdigest()
     launch_token_sha256 = sha256_text(launch_token)
-    context_rel = f"logs/colab_cuda_launch_context_{run_id}.json"
+    context_rel = (
+        f"logs/colab_cuda_launch_context_{run_id}.json"
+        if cuda_provider == "colab"
+        else f"logs/gcp_cuda_launch_context_{run_id}.json"
+    )
     context_path = project_root / context_rel
+    context_schema = (
+        "old_japanese_0_1b_cuda_colab_launch_context_v1"
+        if cuda_provider == "colab"
+        else "old_japanese_0_1b_supervised_cuda_launch_context_v1"
+    )
+    selected_action = "colab_cuda_supervised_training" if cuda_provider == "colab" else "supervised_cuda_training"
     context = {
-        "schema": "old_japanese_0_1b_cuda_colab_launch_context_v1",
+        "schema": context_schema,
         "generated_at_utc": utc_now(),
         "run_id": run_id,
         "backend": "cuda",
-        "selected_action": "colab_cuda_supervised_training",
+        "cuda_provider": cuda_provider,
+        "selected_action": selected_action,
         "launcher_pid": os.getpid(),
         "autonomous_pid": os.getpid(),
         "autonomous_script": "scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py",
@@ -532,10 +623,11 @@ def main() -> None:
     train_exit = Path("logs") / f"train_exit_{run_id}.json"
     startup_lock = project_root / "logs/active_old_japanese_0_1b_training.lock"
     active_lock = project_root / "logs/active_old_japanese_0_1b_cuda.lock"
-    active_lease = colab_lease_path(project_root, run_id)
+    active_lease = cuda_lease_path(project_root, run_id, cuda_provider)
     lock_base = {
         "run_id": run_id,
         "backend": "cuda",
+        "cuda_provider": cuda_provider,
         "launcher_pid": os.getpid(),
         "watcher_pid": None,
         "created_at": datetime.now().astimezone().isoformat(),
@@ -549,7 +641,7 @@ def main() -> None:
         "autonomous_launch_context_sha256": sha256_file(context_path),
         "autonomous_pid": os.getpid(),
         "autonomous_script": "scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py",
-        "selected_action": "colab_cuda_supervised_training",
+        "selected_action": selected_action,
         "hf_export": False,
     }
 
@@ -561,7 +653,7 @@ def main() -> None:
     try:
         quarantine_stale_startup_mutex(project_root)
         if active_lease.exists():
-            raise SystemExit(f"refusing to reuse active Colab CUDA lease: {active_lease.relative_to(project_root).as_posix()}")
+            raise SystemExit(f"refusing to reuse active supervised CUDA lease: {active_lease.relative_to(project_root).as_posix()}")
         acquire_lock(startup_lock, {**lock_base, "train_pid": None, "state": "startup_mutex"})
         try:
             quarantine_stale_active_locks(project_root)
@@ -582,6 +674,7 @@ def main() -> None:
                     preflight=preflight,
                     review=review,
                     context_path=context_path,
+                    cuda_provider=cuda_provider,
                 ),
             )
         finally:
@@ -748,6 +841,7 @@ def main() -> None:
                 preflight=preflight,
                 review=review,
                 context_path=context_path,
+                cuda_provider=cuda_provider,
             )
             while True:
                 exit_code = proc.poll()
@@ -763,6 +857,7 @@ def main() -> None:
                     preflight=preflight,
                     review=review,
                     context_path=context_path,
+                    cuda_provider=cuda_provider,
                 )
                 time.sleep(60)
             stdout_handle.write(f"launcher_completed={utc_now()} exit_code={exit_code}\n")

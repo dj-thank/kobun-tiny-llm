@@ -115,7 +115,7 @@ def main() -> None:
         "hf_export": False,
     }
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"zero_base_review_artifact_written={out_path.relative_to(ROOT)}")
     print(f"zero_base_review_artifact_scope={args.scope}")
 

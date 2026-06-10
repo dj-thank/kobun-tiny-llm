@@ -364,19 +364,32 @@ def verify_autonomous_launch_context_payload(lock: dict[str, Any], run_id: str, 
     except (OSError, json.JSONDecodeError) as exc:
         raise SystemExit(f"autonomous launch context is not readable JSON: {exc}") from exc
     schema = str(context.get("schema") or "")
-    if schema not in {"old_japanese_0_1b_autonomous_launch_context_v1", "old_japanese_0_1b_cuda_colab_launch_context_v1"}:
+    if schema not in {
+        "old_japanese_0_1b_autonomous_launch_context_v1",
+        "old_japanese_0_1b_cuda_colab_launch_context_v1",
+        "old_japanese_0_1b_supervised_cuda_launch_context_v1",
+    }:
         raise SystemExit("autonomous launch context schema mismatch.")
     if str(context.get("run_id") or "") != run_id:
         raise SystemExit("autonomous launch context RunId mismatch.")
-    expected_action = (
-        "colab_cuda_supervised_training"
-        if schema == "old_japanese_0_1b_cuda_colab_launch_context_v1"
-        else "prepare_next_fresh_run_after_static_gate_and_zero_base_reviews"
-    )
+    if schema == "old_japanese_0_1b_cuda_colab_launch_context_v1":
+        expected_action = "colab_cuda_supervised_training"
+    elif schema == "old_japanese_0_1b_supervised_cuda_launch_context_v1":
+        expected_action = "supervised_cuda_training"
+    else:
+        expected_action = "prepare_next_fresh_run_after_static_gate_and_zero_base_reviews"
     if str(context.get("selected_action") or "") != expected_action:
         raise SystemExit("autonomous launch context selected_action is not authorized for training.")
-    if schema == "old_japanese_0_1b_cuda_colab_launch_context_v1" and str(context.get("backend") or "") != "cuda":
-        raise SystemExit("CUDA Colab launch context backend mismatch.")
+    if schema in {
+        "old_japanese_0_1b_cuda_colab_launch_context_v1",
+        "old_japanese_0_1b_supervised_cuda_launch_context_v1",
+    } and str(context.get("backend") or "") != "cuda":
+        raise SystemExit("supervised CUDA launch context backend mismatch.")
+    if schema == "old_japanese_0_1b_supervised_cuda_launch_context_v1" and str(context.get("cuda_provider") or "") not in {
+        "colab",
+        "gcp",
+    }:
+        raise SystemExit("supervised CUDA launch context provider mismatch.")
     if context.get("hf_export") is not False:
         raise SystemExit("autonomous launch context must attest hf_export=false.")
     if str(context.get("launch_nonce_sha256") or "") != hashlib.sha256(nonce.encode("utf-8")).hexdigest():
@@ -473,7 +486,7 @@ def verify_supervisor_context(run_id: str) -> None:
                 or "--allow-start-training" not in launcher_command
                 or "--reviews-passed" not in launcher_command
             ):
-                raise SystemExit("active-run lock launcher_pid is not the authorized CUDA Colab supervisor for this RunId.")
+                raise SystemExit("active-run lock launcher_pid is not the authorized supervised CUDA supervisor for this RunId.")
         elif (
             "start_old_japanese_0_1b_dml_and_watch.ps1" not in launcher_command
             or run_id not in launcher_command
@@ -483,8 +496,11 @@ def verify_supervisor_context(run_id: str) -> None:
             raise SystemExit("active-run lock launcher_pid is not the authorized DML supervisor for this RunId.")
     if lock.get("hf_export") is not False:
         raise SystemExit("active-run lock must attest hf_export=false.")
-    expected_action = "colab_cuda_supervised_training" if lock_backend == "cuda" else "prepare_next_fresh_run_after_static_gate_and_zero_base_reviews"
-    if str(lock.get("selected_action") or "") != expected_action:
+    if lock_backend == "cuda":
+        expected_actions = {"colab_cuda_supervised_training", "supervised_cuda_training"}
+    else:
+        expected_actions = {"prepare_next_fresh_run_after_static_gate_and_zero_base_reviews"}
+    if str(lock.get("selected_action") or "") not in expected_actions:
         raise SystemExit("active-run lock selected_action is not authorized for training.")
     expected_script = "scripts/start_old_japanese_0_1b_cuda_colab_and_watch.py" if lock_backend == "cuda" else "scripts\\autonomous_old_japanese_0_1b_loop.ps1"
     if str(lock.get("autonomous_script") or "") != expected_script:
@@ -672,7 +688,7 @@ def main() -> None:
     if args.run_id and args.run_id.startswith("old_japanese_0_1b_"):
         if not (args.run_id.startswith("old_japanese_0_1b_dml_") or args.run_id.startswith("old_japanese_0_1b_cuda_")):
             raise SystemExit(
-                "Only supervised DirectML or CUDA Colab release-shaped runs are enabled; "
+                "Only supervised DirectML or supervised CUDA release-shaped runs are enabled; "
                 "HIP release training is disabled until equivalent gates exist."
             )
         require_release_candidate_run(args.run_id, context="release-shaped training")
@@ -700,7 +716,7 @@ def main() -> None:
     if run_id.startswith("old_japanese_0_1b_") and not (
         run_id.startswith("old_japanese_0_1b_dml_") or run_id.startswith("old_japanese_0_1b_cuda_")
     ):
-        raise SystemExit("Only DirectML and supervised Colab CUDA release-shaped training are currently enabled.")
+        raise SystemExit("Only DirectML and supervised CUDA release-shaped training are currently enabled.")
 
     text = args.data.read_text(encoding="utf-8")
     val_text = args.val_data.read_text(encoding="utf-8") if args.val_data is not None else None

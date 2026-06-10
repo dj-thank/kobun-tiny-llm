@@ -126,7 +126,11 @@ def main() -> None:
     payload = json.loads(args.out.read_text(encoding="utf-8")) if args.audit_only else build_payload()
     if not args.audit_only:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        args.out.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
     errors = audit_augmentation_manifest(args.out)
     print(
         f"training_augmentation_manifest path={args.out} entries={len(payload.get('entries') or [])} "

@@ -146,7 +146,7 @@ def main() -> None:
         for eval_path, rows in clean_rows_by_path.items():
             out_path = args.write_clean_dir / eval_path.name
             text = "\n".join(json.dumps(row, ensure_ascii=False) for row in rows)
-            out_path.write_text(text + ("\n" if rows else ""), encoding="utf-8")
+            out_path.write_text(text + ("\n" if rows else ""), encoding="utf-8", newline="\n")
             print(
                 f"wrote_clean_eval={out_path} kept={len(rows)} "
                 f"removed={removed_by_path[eval_path]} source={eval_path}"

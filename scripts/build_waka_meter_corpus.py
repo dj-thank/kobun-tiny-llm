@@ -101,7 +101,7 @@ def main() -> None:
     if not rows:
         raise SystemExit("No exact-meter readings found.")
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    args.out.write_text("\n".join(rows) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {args.out} rows={len(rows)} bytes={args.out.stat().st_size}")
 
 

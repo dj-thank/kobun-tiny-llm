@@ -166,11 +166,15 @@ def canonical_active_locks() -> list[Path]:
         )
         if path.exists()
     ]
-    for path in sorted(Path("logs").glob("colab_active_old_japanese_0_1b_cuda.*.json")):
-        name = path.name
-        if ".finished." in name or ".failed_non_release." in name or ".stale." in name:
-            continue
-        locks.append(path)
+    for pattern in (
+        "colab_active_old_japanese_0_1b_cuda.*.json",
+        "gcp_active_old_japanese_0_1b_cuda.*.json",
+    ):
+        for path in sorted(Path("logs").glob(pattern)):
+            name = path.name
+            if ".finished." in name or ".failed_non_release." in name or ".stale." in name:
+                continue
+            locks.append(path)
     return locks
 
 

@@ -41,7 +41,7 @@ def main() -> None:
     if not items:
         raise SystemExit(f"no allowed surface patterns found in {args.allowlist}")
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text("\n".join(items) + "\n", encoding="utf-8")
+    args.out.write_text("\n".join(items) + "\n", encoding="utf-8", newline="\n")
     print(f"external_knowledge_surface_patterns path={args.out} items={len(items)} bytes={args.out.stat().st_size}")
 
 

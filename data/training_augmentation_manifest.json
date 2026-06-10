@@ -22,8 +22,8 @@
       "source_type": "project_authored_rule_table",
       "repeat_count": 12,
       "used_by": "scripts/build_training_corpus.py --morph-repeat",
-      "sha256": "657c4011768256e804d2aab3c9c952b43017637e0e6bdd10daa854da66e5b2a0",
-      "bytes": 4477,
+      "sha256": "a472953aceae2a88602f3cef2b43413fd193745cd05e6de55e6bc1e40c473b70",
+      "bytes": 4415,
       "lines": 62,
       "copyability_status": "project-authored, repo-local release rules",
       "llm_generated_corpus_text": false,
@@ -48,8 +48,8 @@
       "source_type": "derived_from_train_split_public_waka_records",
       "repeat_count": 8,
       "used_by": "scripts/build_worldclass_corpus.py --waka-meter-repeat",
-      "sha256": "1f91e3eecc6a0d86afe4c470265cbd51483a5fc3c121dea57d65ce355b582cfc",
-      "bytes": 79398,
+      "sha256": "9cf47295af6cf847b5c880bcd2ef448f0b7cab97bf81e195c64e447dc65b2716",
+      "bytes": 78596,
       "lines": 802,
       "copyability_status": "derived only from public train-split records; no validation/test items",
       "llm_generated_corpus_text": false,
@@ -87,8 +87,8 @@
       "source_type": "project_authored_rule_table",
       "repeat_count": 4,
       "used_by": "scripts/build_worldclass_corpus.py --external-surface-repeat",
-      "sha256": "fe5c01c47bc6aa281b9da88c08ce4b61f1c457fc798ec76fd8b62ae142696c53",
-      "bytes": 2465,
+      "sha256": "6d1b11c81144c600117519f3fdfd65f09a3db7f76191afe0a0555134d1344b43",
+      "bytes": 2271,
       "lines": 194,
       "copyability_status": "project-authored, repo-local release rules",
       "llm_generated_corpus_text": false,
@@ -98,23 +98,23 @@
   "transform_scripts": [
     {
       "path": "scripts/build_training_corpus.py",
-      "sha256": "34fd2236ddb0ef3b282682c5fc9a589cfec75df11d4e90eb3307d0e6c2dc278c"
+      "sha256": "71901989976566aab39a6a4345a54f737451536efdf92795759e84bc4db1ed32"
     },
     {
       "path": "scripts/build_preference_boost_corpus.py",
-      "sha256": "6d8f3bcfcb2cfc74a26b639da354804e95e5c7ce37a40cbe6bc94252631397b7"
+      "sha256": "e8560164e4e8fb805b898bd30acd3410eddbe3b78cd82a923446736341988e34"
     },
     {
       "path": "scripts/build_worldclass_corpus.py",
-      "sha256": "509f0d66f79d1f53da2b428c94a696b8fd43038469fb9cbd023e8887ef9a20a7"
+      "sha256": "94dd6dc83deb6351ae64686a23d05b7abfa809dd2319eb78f5ea9515789e94f4"
     },
     {
       "path": "scripts/build_waka_meter_corpus.py",
-      "sha256": "829298bae6549083bd04c2c97be0af183a312c918578fc96f908aaad988560d5"
+      "sha256": "9c8868c02518aa31038542c423e48dbc8152e9ab4cdd7db3457977919ec92b0b"
     },
     {
       "path": "scripts/build_external_knowledge_surface_patterns.py",
-      "sha256": "c9a2c19dd3739dd76c6e05a25b4c13414ca1eae72ce620eed4a86f9d98c6fe1f"
+      "sha256": "d1258d0dc222c890c632bf9fe308366d39c33a308b119ca1f46c74fa452656a7"
     }
   ]
 }

@@ -24,13 +24,14 @@ def sha256_file(path: Path) -> str:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Verify the Colab CUDA environment without reading Google credentials.")
+    parser = argparse.ArgumentParser(description="Verify the supervised CUDA environment without reading Google credentials.")
     parser.add_argument("--project-root", type=Path, default=ROOT)
     parser.add_argument("--preflight-gate", default="logs/preflight_gate_old_japanese_0_1b.json")
     parser.add_argument("--review-gate", default="logs/zero_base_review_gate_old_japanese_0_1b.json")
+    parser.add_argument("--cuda-provider", choices=["colab", "gcp"], default="colab")
     parser.add_argument("--min-vram-gb", type=float, default=8.0)
     parser.add_argument("--out", type=Path, default=None)
-    parser.add_argument("--allow-no-cuda", action="store_true", help="Local dry-run mode for tests outside Colab.")
+    parser.add_argument("--allow-no-cuda", action="store_true", help="Local dry-run mode for tests outside the CUDA provider.")
     return parser.parse_args()
 
 
@@ -111,12 +112,14 @@ def main() -> None:
     )
 
     payload: dict[str, Any] = {
-        "schema": "old_japanese_0_1b_colab_cuda_environment_v1",
+        "schema": "old_japanese_0_1b_supervised_cuda_environment_v1",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "project_root": str(project_root),
         "python": sys.executable,
         "platform": platform.platform(),
         "in_colab": "google.colab" in sys.modules or Path("/content").exists(),
+        "cuda_provider": args.cuda_provider,
+        "gcp_compute_hint": args.cuda_provider == "gcp",
         "torch_version": str(torch.__version__),
         "torch_cuda_version": str(torch.version.cuda or ""),
         "torch_hip_version": torch_hip_version,
@@ -140,7 +143,7 @@ def main() -> None:
     text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(text, encoding="utf-8")
+        args.out.write_text(text, encoding="utf-8", newline="\n")
     print(text, end="")
     if issues:
         raise SystemExit(1)

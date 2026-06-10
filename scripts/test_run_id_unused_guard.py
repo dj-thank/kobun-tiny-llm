@@ -80,28 +80,36 @@ def assert_rejected_for_payload(artifact: Path, payload: str) -> None:
 
 
 def assert_allowed_supervisor_context_only() -> None:
-    context = ROOT / "logs" / f"autonomous_launch_context_{RUN_ID}.json"
-    context.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        context.write_text('{"run_id":"' + RUN_ID + '","hf_export":false}\n', encoding="utf-8")
-        allowed = run(
-            [
-                str(PYTHON),
-                "scripts/assert_run_id_unused.py",
-                "--run-id",
-                RUN_ID,
-                "--allow-supervisor-launch-artifacts",
-            ]
-        )
-        if allowed.returncode != 0:
-            raise SystemExit(
-                f"supervisor_launch_context_was_not_allowed stdout={allowed.stdout} stderr={allowed.stderr}"
-            )
-        stale = run([str(PYTHON), "scripts/assert_run_id_unused.py", "--run-id", RUN_ID])
-        if stale.returncode == 0:
-            raise SystemExit("supervisor_launch_context_did_not_block_without_allow_flag")
-    finally:
+    contexts = (
+        ROOT / "logs" / f"autonomous_launch_context_{RUN_ID}.json",
+        ROOT / "logs" / f"colab_cuda_launch_context_{RUN_ID}.json",
+        ROOT / "logs" / f"gcp_cuda_launch_context_{RUN_ID}.json",
+    )
+    for context in contexts:
         cleanup_test_artifact(context)
+        context.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            context.write_text('{"run_id":"' + RUN_ID + '","hf_export":false}\n', encoding="utf-8")
+            allowed = run(
+                [
+                    str(PYTHON),
+                    "scripts/assert_run_id_unused.py",
+                    "--run-id",
+                    RUN_ID,
+                    "--allow-supervisor-launch-artifacts",
+                ]
+            )
+            if allowed.returncode != 0:
+                raise SystemExit(
+                    f"supervisor_launch_context_was_not_allowed path={context.relative_to(ROOT)} stdout={allowed.stdout} stderr={allowed.stderr}"
+                )
+            stale = run([str(PYTHON), "scripts/assert_run_id_unused.py", "--run-id", RUN_ID])
+            if stale.returncode == 0:
+                raise SystemExit(
+                    f"supervisor_launch_context_did_not_block_without_allow_flag path={context.relative_to(ROOT)}"
+                )
+        finally:
+            cleanup_test_artifact(context)
 
 
 def assert_allowed_current_supervisor_active_lock() -> None:

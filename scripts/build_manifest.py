@@ -207,10 +207,15 @@ def main() -> None:
         rows.append(row)
         if not row["include_in_training"]:
             excluded.append(row)
-    args.out.write_text("\n".join(json.dumps(row, ensure_ascii=False) for row in rows) + "\n", encoding="utf-8")
+    args.out.write_text(
+        "\n".join(json.dumps(row, ensure_ascii=False) for row in rows) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     args.excluded_out.write_text(
         "\n".join(json.dumps(row, ensure_ascii=False) for row in excluded) + ("\n" if excluded else ""),
         encoding="utf-8",
+        newline="\n",
     )
     included_total = sum(int(row["characters"]) for row in rows if row["include_in_training"])
     print(f"wrote {args.out} rows={len(rows)} included_chars={included_total} excluded={len(excluded)}")

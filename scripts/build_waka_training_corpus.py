@@ -113,8 +113,8 @@ def main() -> None:
         poems = "\n".join(row["poem"] for row in rows)
         readings = "\n".join(row["reading"] for row in rows if row["reading"])
         write_jsonl(records_path, rows)
-        training_path.write_text(poems + ("\n" if poems else ""), encoding="utf-8")
-        readings_path.write_text(readings + ("\n" if readings else ""), encoding="utf-8")
+        training_path.write_text(poems + ("\n" if poems else ""), encoding="utf-8", newline="\n")
+        readings_path.write_text(readings + ("\n" if readings else ""), encoding="utf-8", newline="\n")
         source["records_file"] = str(records_path)
         source["training_file"] = str(training_path)
         source["readings_file"] = str(readings_path)
@@ -132,9 +132,13 @@ def main() -> None:
 
     corpus_path = args.out_dir / "waka_corpus_all.txt"
     records_all_path = args.out_dir / "waka_records_all.jsonl"
-    corpus_path.write_text("\n\n".join(poem_parts) + "\n", encoding="utf-8")
+    corpus_path.write_text("\n\n".join(poem_parts) + "\n", encoding="utf-8", newline="\n")
     write_jsonl(records_all_path, all_records)
-    args.sources.write_text(json.dumps(updated_sources, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.sources.write_text(
+        json.dumps(updated_sources, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     validate_text(corpus_path, "waka-poems")
     print(f"wrote {corpus_path} poems={len(all_records)} bytes={corpus_path.stat().st_size}")
     print(f"wrote {records_all_path}")

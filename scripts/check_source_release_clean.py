@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 PUBLIC_ROOT_FILES = {
+    ".gitattributes",
     ".gitignore",
     "LICENSE",
     "NOTICE.md",
@@ -21,6 +23,23 @@ PUBLIC_DIRS = {
     "notebooks",
     "scripts",
     "src",
+}
+
+PUBLIC_DATA_FILES = {
+    "data/aozora/sources.json",
+    "data/corpus_manifest.jsonl",
+    "data/excluded_sources.jsonl",
+    "data/tokenizer_public_char_vocab.meta.json",
+    "data/tokenizer_public_char_vocab.txt",
+    "data/training_augmentation_manifest.json",
+    "data/waka/sources.json",
+}
+
+PUBLIC_DATA_PREFIXES = {
+    "data/eval/",
+    "data/external_knowledge/",
+    "data/grammar/",
+    "data/rules/",
 }
 
 EXCLUDED_PARTS = {
@@ -42,6 +61,7 @@ TEXT_SUFFIXES = {
     ".cfg",
     ".ipynb",
     ".json",
+    ".jsonl",
     ".md",
     ".ps1",
     ".py",
@@ -73,6 +93,36 @@ def rel(path: Path) -> str:
     return path.relative_to(ROOT).as_posix()
 
 
+def is_public_data_path(path_rel: str) -> bool:
+    return path_rel in PUBLIC_DATA_FILES or any(
+        path_rel.startswith(prefix) for prefix in PUBLIC_DATA_PREFIXES
+    )
+
+
+def tracked_data_files() -> list[Path]:
+    try:
+        proc = subprocess.run(
+            ["git", "ls-files", "data"],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise SystemExit(f"source_release_hygiene_failed: git ls-files data failed: {exc}")
+    files: list[Path] = []
+    for line in proc.stdout.splitlines():
+        path_rel = line.strip().replace("\\", "/")
+        if not path_rel or not is_public_data_path(path_rel):
+            continue
+        path = ROOT / path_rel
+        if path.exists() and path.is_file() and path.suffix.lower() in TEXT_SUFFIXES:
+            files.append(path)
+    return files
+
+
 def public_source_files() -> list[Path]:
     files: list[Path] = []
     for name in sorted(PUBLIC_ROOT_FILES):
@@ -92,6 +142,7 @@ def public_source_files() -> list[Path]:
             if path.suffix.lower() not in TEXT_SUFFIXES:
                 continue
             files.append(path)
+    files.extend(tracked_data_files())
     return files
 
 

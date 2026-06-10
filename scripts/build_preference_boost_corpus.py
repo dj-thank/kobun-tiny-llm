@@ -38,7 +38,7 @@ def main() -> None:
     parts = [base]
     for idx in range(max(0, args.repeat)):
         parts.append(f"選好注入 {idx + 1}\n{block}")
-    args.out.write_text("\n\n".join(parts) + "\n", encoding="utf-8")
+    args.out.write_text("\n\n".join(parts) + "\n", encoding="utf-8", newline="\n")
     print(
         f"wrote {args.out} base_chars={len(base)} "
         f"pairs={len(preferred_lines)} repeat={args.repeat} bytes={args.out.stat().st_size}"

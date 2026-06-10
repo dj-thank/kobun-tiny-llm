@@ -201,7 +201,7 @@ def main() -> None:
     require_contains(ROOT / "src" / "kobun_llm" / "train.py", "OLD_JAPANESE_REVIEW_GATE")
     require_contains(ROOT / "src" / "kobun_llm" / "train.py", "OLD_JAPANESE_AUTONOMOUS_LAUNCH_CONTEXT")
     require_contains(ROOT / "src" / "kobun_llm" / "train.py", "OLD_JAPANESE_AUTONOMOUS_LAUNCH_NONCE")
-    require_contains(ROOT / "src" / "kobun_llm" / "train.py", "Only supervised DirectML or CUDA Colab release-shaped runs are enabled")
+    require_contains(ROOT / "src" / "kobun_llm" / "train.py", "Only supervised DirectML or supervised CUDA release-shaped runs are enabled")
     require_contains(ROOT / "src" / "kobun_llm" / "train.py", "require_python_parent_is_train_wrapper")
     require_contains(ROOT / "src" / "kobun_llm" / "train.py", "active-run lock train_pid is not in Python ancestor process chain")
     require_contains(ROOT / "src" / "kobun_llm" / "train.py", "active-run lock launcher_pid is not in Python ancestor process chain.")

@@ -193,7 +193,11 @@ def main() -> None:
     out_text = "(not written; check-only)"
     if not args.check_only:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        args.out.write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
         out_text = str(args.out)
     print(f"manifest_rows={len(rows)} included_rows={len(included)} errors={len(errors)} out={out_text}")
     if errors:
