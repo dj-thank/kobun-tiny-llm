@@ -27,7 +27,7 @@ from .release_resume import (
     optimizer_checkpoint_step,
     validate_release_resume_chain_from_payload,
 )
-from .tokenizer import BYTE_FALLBACK_TOKENIZER_TYPE, CharTokenizer, tokenizer_from_text
+from .tokenizer import BYTE_FALLBACK_TOKENIZER_TYPE, CharTokenizer, tokenizer_from_text, tokenizer_vocab_source_text
 
 
 class SimpleAdamW:
@@ -750,7 +750,8 @@ def main() -> None:
             )
     else:
         payload = None
-        tokenizer = tokenizer_from_text(text + tokenizer_extra_text, tokenizer_type=args.tokenizer_type)
+        tokenizer_text = tokenizer_vocab_source_text(text, tokenizer_extra_text, args.tokenizer_type)
+        tokenizer = tokenizer_from_text(tokenizer_text, tokenizer_type=args.tokenizer_type)
         qwen3_kv_heads = args.num_key_value_heads
         if args.qwen3_style and qwen3_kv_heads is None:
             qwen3_kv_heads = max(1, args.n_head // 2)

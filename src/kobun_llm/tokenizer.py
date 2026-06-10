@@ -171,3 +171,9 @@ def tokenizer_from_text(text: str, tokenizer_type: str = "char", add_unk: bool =
     if tokenizer_type == BYTE_FALLBACK_TOKENIZER_TYPE:
         return ByteFallbackCharTokenizer.from_text(text, add_unk=add_unk)
     raise ValueError(f"unknown tokenizer_type: {tokenizer_type}")
+
+
+def tokenizer_vocab_source_text(training_text: str, tokenizer_extra_text: str, tokenizer_type: str) -> str:
+    if tokenizer_type == BYTE_FALLBACK_TOKENIZER_TYPE and tokenizer_extra_text:
+        return tokenizer_extra_text
+    return training_text + tokenizer_extra_text

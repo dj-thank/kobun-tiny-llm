@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from kobun_llm.tokenizer import BYTE_FALLBACK_TOKENIZER_TYPE, tokenizer_from_text
+from kobun_llm.tokenizer import BYTE_FALLBACK_TOKENIZER_TYPE, tokenizer_from_text, tokenizer_vocab_source_text
 
 
 def main() -> None:
@@ -29,6 +29,20 @@ def main() -> None:
     restored = tokenizer.from_dict(payload)
     if restored.decode(restored.encode(heldout_text)) != heldout_text:
         raise SystemExit("serialized byte fallback tokenizer does not preserve lossless behavior")
+
+    audited_vocab = "\u3042\u3044\u3046"
+    train_text_with_extra_chars = "\u3042\u5df2\u6319\u6bb5\u716e\u7981"
+    release_vocab_text = tokenizer_vocab_source_text(
+        train_text_with_extra_chars,
+        audited_vocab,
+        BYTE_FALLBACK_TOKENIZER_TYPE,
+    )
+    release_tokenizer = tokenizer_from_text(release_vocab_text, tokenizer_type=BYTE_FALLBACK_TOKENIZER_TYPE)
+    leaked = set(train_text_with_extra_chars) - set(audited_vocab)
+    if leaked & release_tokenizer.direct_chars:
+        raise SystemExit("release byte fallback tokenizer leaked train-only chars into direct vocab")
+    if release_tokenizer.decode(release_tokenizer.encode(train_text_with_extra_chars)) != train_text_with_extra_chars:
+        raise SystemExit("release byte fallback tokenizer does not roundtrip train-only byte fallback chars")
     print(
         "byte_fallback_tokenizer_ok=true "
         f"vocab_size={tokenizer.vocab_size} "

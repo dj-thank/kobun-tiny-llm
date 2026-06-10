@@ -5,7 +5,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from kobun_llm.model import GPT, GPTConfig
-from kobun_llm.tokenizer import BYTE_FALLBACK_TOKENIZER_TYPE, tokenizer_from_text
+from kobun_llm.tokenizer import BYTE_FALLBACK_TOKENIZER_TYPE, tokenizer_from_text, tokenizer_vocab_source_text
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,7 +35,8 @@ def main() -> None:
     args = parse_args()
     text = args.data.read_text(encoding="utf-8")
     tokenizer_extra_text = "".join(path.read_text(encoding="utf-8") for path in args.tokenizer_extra_data)
-    tokenizer = tokenizer_from_text(text + tokenizer_extra_text, tokenizer_type=args.tokenizer_type)
+    tokenizer_text = tokenizer_vocab_source_text(text, tokenizer_extra_text, args.tokenizer_type)
+    tokenizer = tokenizer_from_text(tokenizer_text, tokenizer_type=args.tokenizer_type)
     config = GPTConfig(
         vocab_size=tokenizer.vocab_size,
         block_size=args.block_size,
