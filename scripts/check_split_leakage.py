@@ -6,7 +6,7 @@ import json
 import re
 from pathlib import Path
 
-from build_training_corpus import clean_training_text, read_manifest_rows, split_manifest_rows_three
+from build_training_corpus import clean_training_text, manifest_path, read_manifest_rows, split_manifest_rows_three
 from split_policy import SPLIT_POLICY
 from waka_variant_dedup import WakaVariantIndex, normalize_waka
 
@@ -73,7 +73,7 @@ def waka_items(row: dict[str, object]) -> list[tuple[str, str]]:
         raise SystemExit(f"waka validation source missing records_file: {row.get('source_id')}")
     if not readings_raw:
         raise SystemExit(f"waka validation source missing readings_file: {row.get('source_id')}")
-    records_file = Path(records_raw)
+    records_file = manifest_path(records_raw)
     require_hash(records_file, str(row.get("records_sha256") or ""), "validation waka records_file")
     for index, raw_line in enumerate(records_file.read_text(encoding="utf-8").splitlines(), start=1):
         if not raw_line.strip():
@@ -84,7 +84,7 @@ def waka_items(row: dict[str, object]) -> list[tuple[str, str]]:
             if value:
                 label = f"{row.get('source_id')} records:{records_file.name}:{index}:{field}"
                 items.append((label, value))
-    readings_file = Path(readings_raw)
+    readings_file = manifest_path(readings_raw)
     require_hash(readings_file, str(row.get("readings_sha256") or ""), "validation waka readings_file")
     for index, raw_line in enumerate(readings_file.read_text(encoding="utf-8").splitlines(), start=1):
         value = normalize_waka(raw_line)
@@ -97,7 +97,7 @@ def waka_items(row: dict[str, object]) -> list[tuple[str, str]]:
 def role_text(rows: list[dict[str, object]]) -> str:
     parts = []
     for row in rows:
-        clean_file = Path(str(row["clean_file"]))
+        clean_file = manifest_path(row["clean_file"])
         require_hash(clean_file, str(row.get("clean_sha256") or ""), f"{row.get('source_id')} clean_file")
         parts.append(clean_training_text(clean_file.read_text(encoding="utf-8")))
     return normalize("\n\n".join(parts))
@@ -106,7 +106,7 @@ def role_text(rows: list[dict[str, object]]) -> str:
 def role_windows(rows: list[dict[str, object]], min_snippet: int) -> list[tuple[str, str]]:
     values: list[tuple[str, str]] = []
     for row in rows:
-        clean_file = Path(str(row["clean_file"]))
+        clean_file = manifest_path(row["clean_file"])
         require_hash(clean_file, str(row.get("clean_sha256") or ""), f"{row.get('source_id')} clean_file")
         source_text = clean_training_text(clean_file.read_text(encoding="utf-8"))
         for window in windows(source_text, min_snippet):
@@ -139,7 +139,7 @@ def main() -> None:
     waka_leaks = 0
     for row in heldout_rows:
         row_checked = False
-        clean_file = Path(str(row["clean_file"]))
+        clean_file = manifest_path(row["clean_file"])
         require_hash(clean_file, str(row.get("clean_sha256") or ""), "validation clean_file")
         source_text = clean_training_text(clean_file.read_text(encoding="utf-8"))
         source_windows = windows(source_text, args.min_snippet)

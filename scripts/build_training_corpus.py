@@ -34,6 +34,10 @@ def read_manifest_rows(path: Path) -> list[dict[str, object]]:
     return rows
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
 def split_manifest_rows_three(
     rows: list[dict[str, object]],
     val_ratio: float,
@@ -85,7 +89,7 @@ def split_manifest_rows(rows: list[dict[str, object]], val_ratio: float) -> tupl
 def manifest_text(rows: list[dict[str, object]]) -> str:
     parts = []
     for row in rows:
-        clean_file = Path(row["clean_file"])
+        clean_file = manifest_path(row["clean_file"])
         text = clean_training_text(clean_file.read_text(encoding="utf-8"))
         header = (
             f"時代 {row['period']}。ジャンル {row['genre']}。"

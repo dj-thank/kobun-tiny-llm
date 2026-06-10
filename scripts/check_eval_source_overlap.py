@@ -9,7 +9,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
-from build_training_corpus import clean_training_text, read_manifest_rows
+from build_training_corpus import clean_training_text, manifest_path, read_manifest_rows
 from split_policy import SPLIT_POLICY, split_name
 
 
@@ -159,15 +159,15 @@ def source_items(manifest: Path, val_ratio: float, test_ratio: float, min_prose_
         role = manifest_role(row, val_ratio, test_ratio)
         source_id = str(row.get("source_id") or row.get("title") or "unknown_source")
         title = str(row.get("title") or source_id)
-        clean_file = Path(str(row.get("clean_file") or ""))
+        clean_file = manifest_path(row.get("clean_file") or "")
         require_hash(clean_file, str(row.get("clean_sha256") or ""), f"{source_id} clean_file")
         clean_text = clean_training_text(clean_file.read_text(encoding="utf-8"))
         for index, window in enumerate(prose_windows(clean_text, min_prose_chars), start=1):
             items.append(SourceItem(role, f"{source_id}:{title}:clean:{index}", "prose", window))
         if row.get("style") != "waka":
             continue
-        records_file = Path(str(row.get("records_file") or ""))
-        readings_file = Path(str(row.get("readings_file") or ""))
+        records_file = manifest_path(row.get("records_file") or "")
+        readings_file = manifest_path(row.get("readings_file") or "")
         require_hash(records_file, str(row.get("records_sha256") or ""), f"{source_id} records_file")
         require_hash(readings_file, str(row.get("readings_sha256") or ""), f"{source_id} readings_file")
         for line_no, raw_line in enumerate(records_file.read_text(encoding="utf-8").splitlines(), start=1):

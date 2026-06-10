@@ -106,6 +106,16 @@ def optional_string(record: dict[str, object], field: str) -> str:
     return str(record.get(field, "") or "")
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
+def manifest_path_text(value: object) -> str:
+    if not str(value or ""):
+        return ""
+    return manifest_path(value).as_posix()
+
+
 def source_kind(record: dict[str, object]) -> str:
     source_url = str(record.get("source_url", ""))
     if "wikisource.org" in source_url:
@@ -151,7 +161,7 @@ def main() -> None:
     excluded = []
     seen_files = set()
     for record in records:
-        clean_file = Path(str(record.get("training_file") or record["clean_file"]))
+        clean_file = manifest_path(record.get("training_file") or record["clean_file"])
         if str(clean_file) in seen_files:
             continue
         seen_files.add(str(clean_file))
@@ -178,10 +188,10 @@ def main() -> None:
             "redistribution_policy": "corpus_text_not_distributed",
             "source_url": record.get("source_url", ""),
             "download_url": record.get("download_url", ""),
-            "raw_file": record.get("raw_file", ""),
-            "clean_file": str(clean_file),
-            "records_file": record.get("records_file", ""),
-            "readings_file": record.get("readings_file", ""),
+            "raw_file": manifest_path_text(record.get("raw_file", "")),
+            "clean_file": clean_file.as_posix(),
+            "records_file": manifest_path_text(record.get("records_file", "")),
+            "readings_file": manifest_path_text(record.get("readings_file", "")),
             "records_sha256": optional_string(record, "records_sha256"),
             "readings_sha256": optional_string(record, "readings_sha256"),
             "training_sha256": optional_string(record, "training_sha256"),

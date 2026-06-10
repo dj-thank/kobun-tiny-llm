@@ -43,6 +43,10 @@ def split_role_for_title(title: str) -> str:
     return split_role_for_work(canonical_work_id(title), include_in_training=True)
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
 def item_fingerprints(row: dict[str, str]) -> list[str]:
     return [value for value in record_fingerprint(row) if value]
 
@@ -61,7 +65,7 @@ def main() -> None:
     parsed_by_source: list[tuple[dict[str, object], list[dict[str, str]]]] = []
     for source in sources:
         title = str(source["title"])
-        clean_path = Path(str(source["clean_file"]))
+        clean_path = manifest_path(source["clean_file"])
         clean_text = clean_path.read_text(encoding="utf-8")
         rows = parse_waka_records(clean_text, title)
         parsed_by_source.append((source, rows))

@@ -25,6 +25,10 @@ DEFAULT_EXACT_TITLES = [
 DEFAULT_PREFIXES: list[str] = []
 DEFAULT_INDEX_PAGES = ["枕草子_(Wikisource)"]
 
+
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
 PARSE_FALLBACK_START_MARKERS = {
     "伊勢物語": ["伊勢物語　朱雀院塗籠御本", "むかしおとこありけり"],
     "和泉式部日記": ["夢よりもはかなき世中", "夢よりもはかなき世中を"],
@@ -247,9 +251,9 @@ def main() -> None:
     args.sources.parent.mkdir(parents=True, exist_ok=True)
     args.sources.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     corpus = "\n\n".join(
-        Path(str(record["clean_file"])).read_text(encoding="utf-8")
+        manifest_path(record["clean_file"]).read_text(encoding="utf-8")
         for record in merged
-        if Path(str(record.get("clean_file", ""))).exists()
+        if manifest_path(record.get("clean_file", "")).exists()
         and include_in_training(SourceRecord(**record))
     )
     corpus_path = args.out_dir / "corpus_all.txt"

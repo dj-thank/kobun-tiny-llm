@@ -42,6 +42,10 @@ def core_japanese_inventory() -> set[str]:
     return chars
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
 def main() -> None:
     args = parse_args()
     chars: set[str] = set()
@@ -57,7 +61,7 @@ def main() -> None:
             continue
         if split_name(row, args.val_ratio, args.test_ratio) != "train":
             continue
-        clean_file = Path(str(row.get("clean_file", "")))
+        clean_file = manifest_path(row.get("clean_file", ""))
         if not clean_file.exists():
             raise SystemExit(f"manifest clean_file does not exist: {clean_file}")
         chars.update(clean_file.read_text(encoding="utf-8"))
@@ -72,7 +76,7 @@ def main() -> None:
         "byte_fallback": True,
         "byte_fallback_encoding": "utf-8",
         "byte_fallback_tokens": 256,
-        "manifest": str(args.manifest),
+        "manifest": args.manifest.as_posix(),
         "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
         "val_ratio": args.val_ratio,
         "test_ratio": args.test_ratio,

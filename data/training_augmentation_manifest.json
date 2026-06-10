@@ -98,7 +98,7 @@
   "transform_scripts": [
     {
       "path": "scripts/build_training_corpus.py",
-      "sha256": "03172efcf83e568729989642bc3bd7ab22d44156f75703ac6d33efb0e7ec93a0"
+      "sha256": "34fd2236ddb0ef3b282682c5fc9a589cfec75df11d4e90eb3307d0e6c2dc278c"
     },
     {
       "path": "scripts/build_preference_boost_corpus.py",
@@ -110,7 +110,7 @@
     },
     {
       "path": "scripts/build_waka_meter_corpus.py",
-      "sha256": "d9a6d57fba579f8f1286fd352347ca9f8a7bb0d14272fb064098321dfc5ce48e"
+      "sha256": "829298bae6549083bd04c2c97be0af183a312c918578fc96f908aaad988560d5"
     },
     {
       "path": "scripts/build_external_knowledge_surface_patterns.py",

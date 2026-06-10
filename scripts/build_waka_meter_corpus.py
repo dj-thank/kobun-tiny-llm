@@ -33,6 +33,10 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
 def record_lines_from_manifest(
     path: Path,
     val_ratio: float,
@@ -56,7 +60,7 @@ def record_lines_from_manifest(
         if in_heldout and not include_validation:
             continue
         included_rows += 1
-        records_file = Path(str(row.get("records_file", "")))
+        records_file = manifest_path(row.get("records_file", ""))
         if records_file.exists():
             lines.extend(records_file.read_text(encoding="utf-8").splitlines())
         else:

@@ -8,6 +8,10 @@ from build_training_corpus import clean_training_text
 from validate_corpus import validate_text
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
 def include_record(record: dict[str, object]) -> bool:
     title = str(record.get("title", ""))
     source_url = str(record.get("source_url", ""))
@@ -36,7 +40,7 @@ def main() -> None:
         if not include_record(record):
             skipped += 1
             continue
-        text = Path(str(record["clean_file"])).read_text(encoding="utf-8")
+        text = manifest_path(record["clean_file"]).read_text(encoding="utf-8")
         parts.append(clean_training_text(text).strip())
     args.out.write_text("\n\n".join(parts) + "\n", encoding="utf-8")
     validate_text(args.out, "training")

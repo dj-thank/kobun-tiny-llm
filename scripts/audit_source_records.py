@@ -30,6 +30,10 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def manifest_path(value: object) -> Path:
+    return Path(str(value).replace("\\", "/"))
+
+
 def audit_source_file(path: Path, *, fix: bool) -> tuple[int, int, int]:
     rows = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(rows, list):
@@ -52,7 +56,7 @@ def audit_source_file(path: Path, *, fix: bool) -> tuple[int, int, int]:
                 if not fix:
                     print(f"ISSUE {path}: row={index} missing {file_key} or {hash_key}")
                 continue
-            file_path = Path(raw_file)
+            file_path = manifest_path(raw_file)
             if not file_path.is_absolute():
                 file_path = root / file_path
             if not file_path.exists():

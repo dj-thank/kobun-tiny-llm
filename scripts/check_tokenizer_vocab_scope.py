@@ -5,7 +5,13 @@ import hashlib
 import json
 from pathlib import Path
 
-from build_tokenizer_public_vocab import CORE_JAPANESE_RANGES, TOKENIZER_POLICY, core_japanese_inventory, split_name
+from build_tokenizer_public_vocab import (
+    CORE_JAPANESE_RANGES,
+    TOKENIZER_POLICY,
+    core_japanese_inventory,
+    manifest_path,
+    split_name,
+)
 from split_policy import SPLIT_POLICY
 
 
@@ -26,7 +32,7 @@ def read_manifest_rows(path: Path) -> list[dict[str, object]]:
 
 
 def read_clean_chars(row: dict[str, object]) -> set[str]:
-    clean_file = Path(str(row.get("clean_file", "")))
+    clean_file = manifest_path(row.get("clean_file", ""))
     if not clean_file.exists():
         raise SystemExit(f"manifest clean_file does not exist: {clean_file}")
     return set(clean_file.read_text(encoding="utf-8"))
@@ -122,11 +128,11 @@ def main() -> None:
     )
 
     result = {
-        "manifest": str(args.manifest),
+        "manifest": args.manifest.as_posix(),
         "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
-        "tokenizer_extra_data": str(args.tokenizer_extra_data),
+        "tokenizer_extra_data": args.tokenizer_extra_data.as_posix(),
         "tokenizer_extra_sha256": hashlib.sha256(tokenizer_bytes).hexdigest(),
-        "tokenizer_meta": str(args.tokenizer_meta),
+        "tokenizer_meta": args.tokenizer_meta.as_posix(),
         "tokenizer_meta_sha256": hashlib.sha256(args.tokenizer_meta.read_bytes()).hexdigest() if args.tokenizer_meta.exists() else "",
         "tokenizer_meta_policy": meta.get("policy", ""),
         "tokenizer_meta_verified": not meta_issues,

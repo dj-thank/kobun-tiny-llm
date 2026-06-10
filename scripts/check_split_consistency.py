@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from build_training_corpus import manifest_text, read_manifest_rows, split_manifest_rows_three
+from build_training_corpus import manifest_path, manifest_text, read_manifest_rows, split_manifest_rows_three
 from kobun_llm.checkpoint_io import load_trusted_checkpoint
 from kobun_autonomy.augmentation_audit import require_clean_augmentation_manifest
 from split_policy import SPLIT_POLICY, split_group_key
@@ -39,7 +39,7 @@ def sha256_file(path: Path) -> str:
 
 
 def resolve_project_path(raw: str) -> Path:
-    path = Path(raw)
+    path = manifest_path(raw)
     if path.is_absolute():
         return path
     return Path.cwd() / path
@@ -130,7 +130,7 @@ def read_entry_text(entries: dict[str, dict[str, Any]], role: str) -> str:
     entry = entries.get(role)
     if entry is None:
         raise SystemExit(f"augmentation manifest missing role: {role}")
-    path = Path(str(entry.get("path") or ""))
+    path = manifest_path(entry.get("path") or "")
     if not path.exists():
         raise SystemExit(f"augmentation source missing for role {role}: {path}")
     expected_hash = str(entry.get("sha256") or "")
